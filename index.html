@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sol Estofados — Sistema de Manutenção</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="logo-area">
+        <div class="logo-name">Sol Estofados</div>
+        <div class="logo-sub">Sistema de Manutenção</div>
+      </div>
+      <div class="nav-section">Principal</div>
+      <div class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" data-page="ordens">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><line x1="5" y1="7" x2="11" y2="7"/><line x1="5" y1="10" x2="9" y2="10"/></svg>
+        Ordens de Serviço
+      </div>
+      <div class="nav-item" data-page="historico">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="5.5"/><line x1="8" y1="5" x2="8" y2="8"/><line x1="8" y1="8" x2="10.5" y2="10.5"/></svg>
+        Histórico
+      </div>
+      <div class="nav-section">Recursos</div>
+      <div class="nav-item" data-page="estoque">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="12" height="8" rx="1"/><path d="M5 5V4a3 3 0 016 0v1"/></svg>
+        Estoque de Peças
+      </div>
+      <div class="nav-item" data-page="tecnicos">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="2.5"/><path d="M3 14c0-3.3 2.2-5 5-5s5 1.7 5 5"/></svg>
+        Técnicos
+      </div>
+      <div class="nav-item" data-page="relatorios">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1.5"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="8" y2="9"/></svg>
+        Relatórios
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title" id="page-title">Dashboard</div>
+          <span class="badge-live" id="sync-status">Sincronizando...</span>
+        </div>
+        <div class="topbar-right">
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform" target="_blank">
+            <button class="btn btn-primary">+ Nova OS</button>
+          </a>
+          <button class="btn btn-outline" onclick="app.loadData()">Atualizar</button>
+          <div class="avatar">LC</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- DASHBOARD -->
+        <div class="page active" id="page-dashboard">
+          <div class="kpi-grid">
+            <div class="kpi"><div class="kpi-accent" style="background:#378ADD;"></div><div class="kpi-label">Total de OS</div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-sub">Carregando...</div></div>
+            <div class="kpi"><div class="kpi-accent" style="background:#639922;"></div><div class="kpi-label">Concluídas</div><div class="kpi-val" id="kpi-conc">—</div><div class="kpi-sub green" id="kpi-conc-pct">—</div></div>
+            <div class="kpi"><div class="kpi-accent" style="background:#EF9F27;"></div><div class="kpi-label">Corretivas</div><div class="kpi-val" id="kpi-cor">—</div><div class="kpi-sub amber" id="kpi-cor-pct">—</div></div>
+            <div class="kpi"><div class="kpi-accent" style="background:#185FA5;"></div><div class="kpi-label">Preventivas</div><div class="kpi-val" id="kpi-prev">—</div><div class="kpi-sub" id="kpi-prev-pct">—</div></div>
+          </div>
+          <div class="row2">
+            <div class="panel">
+              <div class="ph"><div class="pt">Últimas OS registradas</div><div class="pa" data-goto="ordens">Ver todas →</div></div>
+              <div class="tabs">
+                <div class="tab active" data-filter="Todas">Todas</div>
+                <div class="tab" data-filter="Corretiva">Corretivas</div>
+                <div class="tab" data-filter="Preventiva">Preventivas</div>
+              </div>
+              <div style="overflow-x:auto;"><table><thead><tr><th>OS</th><th>Setor</th><th>Equipamento</th><th>Tipo</th><th>Técnico</th><th>Status</th></tr></thead><tbody id="dash-tbody"></tbody></table></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="panel"><div class="ph"><div class="pt">OS por setor</div></div><div class="chart-wrap" id="setor-chart"></div></div>
+              <div class="panel"><div class="ph"><div class="pt">OS por técnico</div></div><div class="chart-wrap" id="tecnico-chart"></div></div>
+            </div>
+          </div>
+          <div class="row3">
+            <div class="panel"><div class="ph"><div class="pt">Atividade recente</div></div><div id="timeline"></div></div>
+            <div class="panel"><div class="ph"><div class="pt">Tipo de intervenção</div></div><div id="intervencao-chart" class="chart-wrap"></div></div>
+            <div class="panel"><div class="ph"><div class="pt">Alertas de estoque</div><div class="pa" data-goto="estoque">Gerenciar →</div></div><div id="estoque-mini"></div></div>
+          </div>
+        </div>
+
+        <!-- ORDENS -->
+        <div class="page" id="page-ordens">
+          <div class="panel">
+            <div class="ph">
+              <div class="pt">Ordens de Serviço</div>
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform" target="_blank"><button class="btn btn-primary" style="font-size:11px;padding:5px 12px;">+ Nova OS</button></a>
+            </div>
+            <div class="filter-bar" id="os-filters">
+              <button class="filter-btn active" data-filter="Todos">Todos</button>
+              <button class="filter-btn" data-filter="Concluída">Concluídas</button>
+              <button class="filter-btn" data-filter="Em andamento">Em andamento</button>
+              <button class="filter-btn" data-filter="Aberta">Abertas</button>
+              <button class="filter-btn" data-filter="Corretiva">Corretivas</button>
+              <button class="filter-btn" data-filter="Preventiva">Preventivas</button>
+            </div>
+            <div style="padding:8px 14px;border-bottom:0.5px solid var(--border);">
+              <input type="text" id="os-search" placeholder="Buscar por equipamento, setor, técnico, descrição...">
+            </div>
+            <div style="overflow-x:auto;">
+              <table><thead><tr><th>Nº OS</th><th>Data</th><th>Setor</th><th>Equipamento</th><th>Falha</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
+              <tbody id="os-tbody"></tbody></table>
+            </div>
+            <div style="padding:10px 14px;font-size:11px;color:#888;" id="os-count"></div>
+          </div>
+        </div>
+
+        <!-- HISTÓRICO -->
+        <div class="page" id="page-historico">
+          <div class="panel">
+            <div class="ph"><div class="pt">Histórico por equipamento</div></div>
+            <div style="padding:10px 14px;border-bottom:0.5px solid var(--border);">
+              <input type="text" id="hist-search" placeholder="Buscar equipamento...">
+            </div>
+            <div id="hist-content"></div>
+          </div>
+        </div>
+
+        <!-- ESTOQUE -->
+        <div class="page" id="page-estoque">
+          <div class="kpi-grid">
+            <div class="kpi"><div class="kpi-accent" style="background:#378ADD;"></div><div class="kpi-label">Total de itens</div><div class="kpi-val" id="estq-total">—</div></div>
+            <div class="kpi"><div class="kpi-accent" style="background:#A32D2D;"></div><div class="kpi-label">Estoque crítico</div><div class="kpi-val" id="estq-crit">—</div><div class="kpi-sub red">Reposição urgente</div></div>
+            <div class="kpi"><div class="kpi-accent" style="background:#EF9F27;"></div><div class="kpi-label">Estoque baixo</div><div class="kpi-val" id="estq-baixo">—</div><div class="kpi-sub amber">Atenção necessária</div></div>
+            <div class="kpi"><div class="kpi-accent" style="background:#639922;"></div><div class="kpi-label">Estoque adequado</div><div class="kpi-val" id="estq-ok">—</div><div class="kpi-sub green">Dentro do esperado</div></div>
+          </div>
+          <div class="panel">
+            <div class="ph"><div class="pt">Itens em estoque</div><div class="pa" id="estq-edit-link">Editar na planilha →</div></div>
+            <div style="overflow-x:auto;"><table><thead><tr><th>Item / Peça</th><th>Categoria</th><th>Qtd. em estoque</th><th>Mín. recomendado</th><th>Situação</th><th>Último uso</th></tr></thead><tbody id="estq-tbody"></tbody></table></div>
+          </div>
+        </div>
+
+        <!-- TÉCNICOS -->
+        <div class="page" id="page-tecnicos">
+          <div class="kpi-grid" id="tec-kpis"></div>
+          <div class="row2">
+            <div class="panel"><div class="ph"><div class="pt">OS por técnico — detalhado</div></div>
+              <table><thead><tr><th>Técnico</th><th>Total OS</th><th>Corretivas</th><th>Preventivas</th><th>Concluídas</th></tr></thead><tbody id="tec-tbody"></tbody></table>
+            </div>
+            <div class="panel"><div class="ph"><div class="pt">Distribuição</div></div><div class="chart-wrap" id="tec-chart"></div></div>
+          </div>
+        </div>
+
+        <!-- RELATÓRIOS -->
+        <div class="page" id="page-relatorios">
+          <div class="row3">
+            <div class="panel"><div class="ph"><div class="pt">Setores com mais OS</div></div><div id="rel-setores"></div></div>
+            <div class="panel"><div class="ph"><div class="pt">Equipamentos mais acionados</div></div><div id="rel-equipamentos"></div></div>
+            <div class="panel"><div class="ph"><div class="pt">Tipo de intervenção</div></div><div id="rel-pecas"></div></div>
+          </div>
+          <div class="panel" style="margin-top:14px;">
+            <div class="ph"><div class="pt">Resumo geral</div></div>
+            <table><thead><tr><th>Tipo</th><th>Quantidade</th><th>Percentual</th></tr></thead><tbody id="rel-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
