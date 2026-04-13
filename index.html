@@ -1,157 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema de Manutenção</title>
+<style>
+body{font-family:Arial;background:#f0f2f5;margin:0}
+.top{background:#111;color:#fff;padding:10px;display:flex;gap:10px;align-items:center}
+button{padding:6px 10px;cursor:pointer}
+.container{padding:20px}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:8px;border-bottom:1px solid #ddd;font-size:12px}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  <input type="file" id="file" accept=".csv">
+  <button onclick="limpar()">Limpar Dados</button>
+  <span id="status">Aguardando CSV</span>
+</div>
+
+<div class="container">
+  <h3>Total de OS: <span id="total">0</span></h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>OS</th>
+        <th>Data</th>
+        <th>Setor</th>
+        <th>Equipamento</th>
+        <th>Técnico</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="tabela"></tbody>
+  </table>
+</div>
+
 <script>
-// ── Mapeamento de colunas ──────────────────────────────────────────────
+// ─── CONFIG COLUNAS ───
 const COL = {
-  NUM:0, DATA:1, HORA:2, SOL:4, SETOR:6, EQUIP:7,
-  FALHA:25, TIPO:29, SERVICO:30, PECA:31,
-  TECNICO:41, STATUS:42,
+  NUM:0, DATA:1, SETOR:6, EQUIP:7, TEC:41, STATUS:42
 };
 
-// ── Estado ─────────────────────────────────────────────────────────────
 let OS = [];
-let osFilter = 'Todos';
-let dashTab  = 'Todas';
-let currentPage = 'upload';
 
-// ── Helpers ────────────────────────────────────────────────────────────
-const $ = id => document.getElementById(id);
-const setText = (id,v)=>{ if($(id)) $(id).textContent=v };
-const groupBy = (arr,fn)=>{const m={};arr.forEach(x=>{const k=fn(x)||'—';m[k]=(m[k]||0)+1});return m};
-const sorted=o=>Object.entries(o).sort((a,b)=>b[1]-a[1]);
-const count=(arr,fn)=>arr.filter(fn).length;
-const isCor=x=>(x.tipo||'').toLowerCase().includes('corretiva');
-const isPrev=x=>(x.tipo||'').toLowerCase().includes('preventiva');
-
-// ── CSV ────────────────────────────────────────────────────────────────
+// ─── PARSE CSV ───
 function parseCSV(text){
   const sep = text.includes(';') ? ';' : ',';
-  const lines = text.split('\n').map(l=>l.split(sep).map(c=>c.trim().replace(/^"|"$/g,'')));
+  const linhas = text.split('\n').map(l=>l.split(sep));
 
-  return lines.slice(2).filter(r=>r.length>5 && r[0]).map(r=>({
-    n:r[COL.NUM]||'',
-    data:r[COL.DATA]||'',
-    hora:r[COL.HORA]||'',
-    setor:r[COL.SETOR]||'',
-    equip:r[COL.EQUIP]||'',
-    falha:r[COL.FALHA]||'',
-    tipo:r[COL.TIPO]||'',
-    servico:r[COL.SERVICO]||'',
-    peca:r[COL.PECA]||'',
-    tecnico:(r[COL.TECNICO]||'').trim(),
+  return linhas.slice(2).map(r=>({
+    n:r[COL.NUM],
+    data:r[COL.DATA],
+    setor:r[COL.SETOR],
+    equip:r[COL.EQUIP],
+    tec:r[COL.TEC],
     status:r[COL.STATUS]||'Aberta'
-  }));
+  })).filter(x=>x.n);
 }
 
-// ── SALVAR ─────────────────────────────────────────────────────────────
-function salvarLocal(){
+// ─── RENDER ───
+function render(){
+  document.getElementById('total').textContent = OS.length;
+
+  document.getElementById('tabela').innerHTML =
+    OS.map(x=>`
+      <tr>
+        <td>#${x.n}</td>
+        <td>${x.data}</td>
+        <td>${x.setor}</td>
+        <td>${x.equip}</td>
+        <td>${x.tec}</td>
+        <td>${x.status}</td>
+      </tr>
+    `).join('');
+}
+
+// ─── SALVAR ───
+function salvar(){
   localStorage.setItem('os_data', JSON.stringify(OS));
 }
 
-// ── CARREGAR ───────────────────────────────────────────────────────────
-function carregarLocal(){
+// ─── CARREGAR ───
+function carregar(){
   const data = localStorage.getItem('os_data');
   if(data){
     OS = JSON.parse(data);
-    if(OS.length){
-      setSyncBadge('ok', `${OS.length} OS carregadas`);
-      navigateTo('dashboard');
-    }
+    render();
+    document.getElementById('status').textContent = OS.length + ' OS carregadas';
   }
 }
 
-// ── LIMPAR ─────────────────────────────────────────────────────────────
-function limparDados(){
-  if(confirm('Deseja apagar os dados salvos?')){
+// ─── LIMPAR ───
+function limpar(){
+  if(confirm('Apagar dados?')){
     localStorage.clear();
     location.reload();
   }
 }
 
-// ── Upload ─────────────────────────────────────────────────────────────
-function handleFile(file){
-  if(!file || !file.name.endsWith('.csv')) return;
+// ─── UPLOAD ───
+document.getElementById('file').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
 
   const reader = new FileReader();
-  reader.onload = e=>{
-    OS = parseCSV(e.target.result);
+  reader.onload = ev=>{
+    OS = parseCSV(ev.target.result);
 
-    if(!OS.length){
-      alert('CSV inválido');
-      return;
-    }
+    salvar();
+    render();
 
-    salvarLocal();
-    setSyncBadge('ok', `${OS.length} OS carregadas`);
-    navigateTo('dashboard');
+    document.getElementById('status').textContent =
+      OS.length + ' OS carregadas';
   };
   reader.readAsText(file);
-}
-
-// ── Navegação ──────────────────────────────────────────────────────────
-function navigateTo(page){
-  if(!OS.length && page!=='upload'){navigateTo('upload');return;}
-
-  currentPage = page;
-
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-
-  $(`page-${page}`).classList.add('active');
-  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
-
-  render();
-}
-
-// ── Badge ──────────────────────────────────────────────────────────────
-function setSyncBadge(type,msg){
-  const el=$('sync-badge');
-  el.className=`sync-badge ${type}`;
-  el.textContent=msg;
-}
-
-// ── Render geral ───────────────────────────────────────────────────────
-function render(){
-  if(currentPage==='dashboard') renderDashboard();
-  if(currentPage==='ordens') renderOS();
-}
-
-// ── Dashboard ──────────────────────────────────────────────────────────
-function renderDashboard(){
-  setText('kpi-total', OS.length);
-  setText('kpi-conc', count(OS,x=>x.status==='Concluída'));
-  setText('kpi-cor', count(OS,isCor));
-  setText('kpi-prev', count(OS,isPrev));
-}
-
-// ── OS ─────────────────────────────────────────────────────────────────
-function renderOS(){
-  let data = OS.slice().reverse();
-
-  $('os-tbody').innerHTML = data.map(x=>`
-    <tr>
-      <td>#${x.n}</td>
-      <td>${x.data}</td>
-      <td>${x.setor}</td>
-      <td>${x.equip}</td>
-      <td>${x.falha}</td>
-      <td>${x.tipo}</td>
-      <td>${x.servico}</td>
-      <td>${x.tecnico}</td>
-      <td>${x.status}</td>
-    </tr>
-  `).join('');
-}
-
-// ── Eventos ────────────────────────────────────────────────────────────
-document.querySelectorAll('.nav-item').forEach(i=>{
-  i.addEventListener('click',()=>navigateTo(i.dataset.page));
 });
 
-['csv-input-side','csv-input-top','csv-input-dz'].forEach(id=>{
-  $(id)?.addEventListener('change',e=>handleFile(e.target.files[0]));
-});
-
-// ── Inicialização ──────────────────────────────────────────────────────
-window.onload = ()=>{
-  carregarLocal();
-};
+// ─── INIT ───
+window.onload = carregar;
 </script>
+
+</body>
+</html>
