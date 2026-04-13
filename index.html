@@ -2,126 +2,196 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Sistema de Manutenção</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sol Estofados — Sistema</title>
+
 <style>
-body{font-family:Arial;background:#f0f2f5;margin:0}
-.top{background:#111;color:#fff;padding:10px;display:flex;gap:10px;align-items:center}
-button{padding:6px 10px;cursor:pointer}
-.container{padding:20px}
-table{width:100%;border-collapse:collapse;background:#fff}
-th,td{padding:8px;border-bottom:1px solid #ddd;font-size:12px}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f5f5f5;
+}
+
+.sidebar{
+  width:220px;
+  background:#111;
+  color:#fff;
+  height:100vh;
+  position:fixed;
+  padding:20px;
+}
+
+.sidebar h2{
+  font-size:16px;
+}
+
+.menu{
+  margin-top:20px;
+}
+
+.menu div{
+  padding:10px;
+  cursor:pointer;
+}
+
+.menu div:hover{
+  background:#333;
+}
+
+.main{
+  margin-left:220px;
+  padding:20px;
+}
+
+.card{
+  background:#fff;
+  padding:15px;
+  margin-bottom:10px;
+  border-radius:8px;
+}
+
+button{
+  padding:10px;
+  cursor:pointer;
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  border-radius:5px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th, td{
+  padding:8px;
+  border-bottom:1px solid #ddd;
+  text-align:left;
+}
 </style>
 </head>
 
 <body>
 
-<div class="top">
-  <input type="file" id="file" accept=".csv">
-  <button onclick="limpar()">Limpar Dados</button>
-  <span id="status">Aguardando CSV</span>
+<div class="sidebar">
+  <h2>Sol Estofados</h2>
+
+  <div class="menu">
+    <div onclick="showPage('upload')">Importar</div>
+    <div onclick="showPage('dashboard')">Dashboard</div>
+    <div onclick="showPage('os')">Ordens</div>
+  </div>
 </div>
 
-<div class="container">
-  <h3>Total de OS: <span id="total">0</span></h3>
+<div class="main">
 
-  <table>
-    <thead>
-      <tr>
-        <th>OS</th>
-        <th>Data</th>
-        <th>Setor</th>
-        <th>Equipamento</th>
-        <th>Técnico</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="tabela"></tbody>
-  </table>
+  <!-- UPLOAD -->
+  <div id="upload">
+    <div class="card">
+      <h3>Importar CSV</h3>
+      <input type="file" id="file">
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" style="display:none">
+    <div class="card">
+      <h3>Total de OS</h3>
+      <h1 id="total">0</h1>
+    </div>
+
+    <div class="card">
+      <h3>Concluídas</h3>
+      <h1 id="conc">0</h1>
+    </div>
+  </div>
+
+  <!-- OS -->
+  <div id="os" style="display:none">
+    <div class="card">
+      <h3>Ordens de Serviço</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>OS</th>
+            <th>Equipamento</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tabela"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <script>
-// ─── CONFIG COLUNAS ───
-const COL = {
-  NUM:0, DATA:1, SETOR:6, EQUIP:7, TEC:41, STATUS:42
-};
 
-let OS = [];
+let dados = [];
 
-// ─── PARSE CSV ───
-function parseCSV(text){
-  const sep = text.includes(';') ? ';' : ',';
-  const linhas = text.split('\n').map(l=>l.split(sep));
+// trocar página
+function showPage(p){
+  document.getElementById("upload").style.display="none";
+  document.getElementById("dashboard").style.display="none";
+  document.getElementById("os").style.display="none";
 
-  return linhas.slice(2).map(r=>({
-    n:r[COL.NUM],
-    data:r[COL.DATA],
-    setor:r[COL.SETOR],
-    equip:r[COL.EQUIP],
-    tec:r[COL.TEC],
-    status:r[COL.STATUS]||'Aberta'
-  })).filter(x=>x.n);
+  document.getElementById(p).style.display="block";
 }
 
-// ─── RENDER ───
-function render(){
-  document.getElementById('total').textContent = OS.length;
+// ler arquivo
+document.getElementById("file").addEventListener("change", function(e){
 
-  document.getElementById('tabela').innerHTML =
-    OS.map(x=>`
-      <tr>
-        <td>#${x.n}</td>
-        <td>${x.data}</td>
-        <td>${x.setor}</td>
-        <td>${x.equip}</td>
-        <td>${x.tec}</td>
-        <td>${x.status}</td>
-      </tr>
-    `).join('');
-}
-
-// ─── SALVAR ───
-function salvar(){
-  localStorage.setItem('os_data', JSON.stringify(OS));
-}
-
-// ─── CARREGAR ───
-function carregar(){
-  const data = localStorage.getItem('os_data');
-  if(data){
-    OS = JSON.parse(data);
-    render();
-    document.getElementById('status').textContent = OS.length + ' OS carregadas';
-  }
-}
-
-// ─── LIMPAR ───
-function limpar(){
-  if(confirm('Apagar dados?')){
-    localStorage.clear();
-    location.reload();
-  }
-}
-
-// ─── UPLOAD ───
-document.getElementById('file').addEventListener('change', e=>{
   const file = e.target.files[0];
   if(!file) return;
 
   const reader = new FileReader();
-  reader.onload = ev=>{
-    OS = parseCSV(ev.target.result);
 
-    salvar();
-    render();
-
-    document.getElementById('status').textContent =
-      OS.length + ' OS carregadas';
+  reader.onload = function(e){
+    try{
+      processCSV(e.target.result);
+      showPage("dashboard");
+    }catch(err){
+      alert("Erro no CSV");
+      console.error(err);
+    }
   };
+
   reader.readAsText(file);
 });
 
-// ─── INIT ───
-window.onload = carregar;
+function processCSV(text){
+
+  const linhas = text.split("\n").map(l => l.split(";"));
+
+  dados = linhas.slice(1).filter(l => l.length > 3).map(l => ({
+    os: l[0],
+    equip: l[7],
+    status: l[42]
+  }));
+
+  atualizar();
+}
+
+function atualizar(){
+
+  document.getElementById("total").innerText = dados.length;
+
+  const concluidas = dados.filter(d => d.status === "Concluída").length;
+  document.getElementById("conc").innerText = concluidas;
+
+  // tabela
+  const tbody = document.getElementById("tabela");
+
+  tbody.innerHTML = dados.map(d => `
+    <tr>
+      <td>${d.os}</td>
+      <td>${d.equip || "-"}</td>
+      <td>${d.status || "-"}</td>
+    </tr>
+  `).join("");
+}
+
 </script>
 
 </body>
