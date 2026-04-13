@@ -177,12 +177,14 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
 <body>
 <div class="app">
 
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="logo">
       <div class="logo-name">Sol Estofados</div>
       <div class="logo-sub">Sistema de Manutenção</div>
     </div>
 
+    <!-- Upload CSV na sidebar -->
     <div class="upload-zone-side" onclick="document.getElementById('csv-input-side').click()" id="side-drop">
       <div class="uz-icon">📂</div>
       <p><strong>Carregar CSV</strong><br>Clique para importar<br>suas ordens de serviço</p>
@@ -216,6 +218,7 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
     </div>
   </div>
 
+  <!-- MAIN -->
   <div class="main">
     <div class="topbar">
       <div class="topbar-l">
@@ -234,6 +237,7 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
 
     <div class="content">
 
+      <!-- UPLOAD PAGE (inicial) -->
       <div class="page active" id="page-upload">
         <div class="upload-hero">
           <h2>Bem-vindo ao Sistema de Manutenção</h2>
@@ -268,6 +272,7 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
         </div>
       </div>
 
+      <!-- DASHBOARD -->
       <div class="page" id="page-dashboard">
         <div class="kpi-grid">
           <div class="kpi"><div class="kpi-bar" style="background:#2563EB;"></div><div class="kpi-label">Total de OS</div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-sub">registradas</div></div>
@@ -277,11 +282,11 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
         </div>
         <div class="row2">
           <div class="panel">
-            <div class="ph"><div class="pt">Últimas OS registradas</div><div class="pa" onclick="navigateTo('ordens')">Ver todas →</div></div>
+            <div class="ph"><div class="pt">Últimas OS registradas</div><div class="pa" data-goto="ordens">Ver todas →</div></div>
             <div class="tabs" id="dash-tabs">
-              <div class="tab active" onclick="setDashTab('Todas', this)">Todas</div>
-              <div class="tab" onclick="setDashTab('Corretiva', this)">Corretivas</div>
-              <div class="tab" onclick="setDashTab('Preventiva', this)">Preventivas</div>
+              <div class="tab active" data-filter="Todas">Todas</div>
+              <div class="tab" data-filter="Corretiva">Corretivas</div>
+              <div class="tab" data-filter="Preventiva">Preventivas</div>
             </div>
             <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Setor</th><th>Equipamento</th><th>Tipo</th><th>Técnico</th><th>Status</th></tr></thead><tbody id="dash-tbody"></tbody></table></div>
           </div>
@@ -297,19 +302,20 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
         </div>
       </div>
 
+      <!-- ORDENS -->
       <div class="page" id="page-ordens">
         <div class="panel">
           <div class="ph"><div class="pt">Ordens de Serviço</div><span id="os-total-badge" class="badge b-ab"></span></div>
           <div class="filter-bar" id="os-filters">
-            <button class="filter-btn active" onclick="setOSFilter('Todos', this)">Todos</button>
-            <button class="filter-btn" onclick="setOSFilter('Concluída', this)">Concluídas</button>
-            <button class="filter-btn" onclick="setOSFilter('Em andamento', this)">Em andamento</button>
-            <button class="filter-btn" onclick="setOSFilter('Aberta', this)">Abertas</button>
-            <button class="filter-btn" onclick="setOSFilter('Corretiva', this)">Corretivas</button>
-            <button class="filter-btn" onclick="setOSFilter('Preventiva', this)">Preventivas</button>
+            <button class="filter-btn active" data-filter="Todos">Todos</button>
+            <button class="filter-btn" data-filter="Concluída">Concluídas</button>
+            <button class="filter-btn" data-filter="Em andamento">Em andamento</button>
+            <button class="filter-btn" data-filter="Aberta">Abertas</button>
+            <button class="filter-btn" data-filter="Corretiva">Corretivas</button>
+            <button class="filter-btn" data-filter="Preventiva">Preventivas</button>
           </div>
           <div style="padding:8px 14px;border-bottom:1px solid var(--border);">
-            <input type="text" id="os-search" oninput="renderOS()" placeholder="Buscar por OS, equipamento, setor, técnico, falha...">
+            <input type="text" id="os-search" placeholder="Buscar por OS, equipamento, setor, técnico, falha...">
           </div>
           <div class="tbl-wrap">
             <table><thead><tr><th>Nº OS</th><th>Data</th><th>Setor</th><th>Equipamento</th><th>Falha</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
@@ -319,34 +325,49 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
         </div>
       </div>
 
+      <!-- HISTÓRICO -->
       <div class="page" id="page-historico">
         <div class="panel">
           <div class="ph"><div class="pt">Histórico por equipamento</div></div>
           <div style="padding:8px 14px;border-bottom:1px solid var(--border);">
-            <input type="text" id="hist-search" oninput="renderHistorico()" placeholder="Buscar equipamento...">
+            <input type="text" id="hist-search" placeholder="Buscar equipamento...">
           </div>
           <div id="hist-content"></div>
         </div>
       </div>
 
+      <!-- TÉCNICOS -->
       <div class="page" id="page-tecnicos">
-        <div class="panel">
-          <div class="ph"><div class="pt">Análise de Técnicos</div></div>
-          <div class="tbl-wrap">
-            <table><thead><tr><th>Técnico</th><th>Total de OS</th><th>Eficiência</th></tr></thead>
+        <div class="kpi-grid" id="tec-kpis"></div>
+        <div class="row2">
+          <div class="panel">
+            <div class="ph"><div class="pt">Desempenho por técnico</div></div>
+            <table><thead><tr><th>Técnico</th><th>Total</th><th>Corretivas</th><th>Preventivas</th><th>Concluídas</th><th>Em aberto</th></tr></thead>
             <tbody id="tec-tbody"></tbody></table>
           </div>
+          <div class="panel"><div class="ph"><div class="pt">Distribuição de OS</div></div><div class="chart-wrap" id="tec-chart"></div></div>
         </div>
       </div>
 
+      <!-- RELATÓRIOS -->
       <div class="page" id="page-relatorios">
-        <div class="panel">
-          <div class="ph"><div class="pt">Relatório Geral</div></div>
-          <div class="chart-wrap" id="rel-setores"></div>
+        <div class="row3">
+          <div class="panel"><div class="ph"><div class="pt">Setores com mais OS</div></div><div id="rel-setores"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Equipamentos mais acionados</div></div><div id="rel-equip"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Peças / intervenções</div></div><div id="rel-pecas"></div></div>
+        </div>
+        <div class="panel" style="margin-top:14px;">
+          <div class="ph"><div class="pt">Resumo geral das intervenções</div></div>
+          <table><thead><tr><th>Tipo de intervenção</th><th>Quantidade</th><th>Percentual</th></tr></thead>
+          <tbody id="rel-tbody"></tbody></table>
         </div>
       </div>
 
-    </div></div></div><script>
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
 // ── Mapeamento de colunas do CSV da Sol Estofados ──────────────────────
 const COL = {
   NUM:      0,   // Nº OS
@@ -359,6 +380,7 @@ const COL = {
   TIPO:     29,  // Intervenção Realizada
   SERVICO:  30,  // Serviço Realizado
   PECA:     31,  // Peças reparadas
+  SEG:      32,  // Segurança
   TECNICO:  41,  // Técnico
   STATUS:   42,  // Status da OS
 };
@@ -379,7 +401,9 @@ const isCor   = x => (x.tipo||'').toLowerCase().includes('corretiva');
 const isPrev  = x => (x.tipo||'').toLowerCase().includes('preventiva');
 
 function badgeTipo(x) {
-  return isCor(x) ? '<span class="badge b-cor">Corretiva</span>' : '<span class="badge b-prev">Preventiva</span>';
+  return isCor(x)
+    ? '<span class="badge b-cor">Corretiva</span>'
+    : '<span class="badge b-prev">Preventiva</span>';
 }
 function badgeStatus(s) {
   const m = {'Concluída':'b-conc','Em andamento':'b-and','Aberta':'b-ab','Urgente':'b-urg'};
@@ -388,8 +412,11 @@ function badgeStatus(s) {
 
 // ── Parser CSV ─────────────────────────────────────────────────────────
 function parseCSV(text) {
+  // detecta separador
   const sep = text.split('\n')[1]?.includes(';') ? ';' : ',';
   const lines = text.split('\n').map(l => l.split(sep).map(c => c.trim().replace(/^"|"$/g,'')));
+
+  // pula linha 1 (título) e linha 2 (cabeçalho)
   const dataStart = lines[1]?.[0]?.toLowerCase().includes('nº') || lines[1]?.[0]?.toLowerCase().includes('n°') ? 2 : 1;
 
   return lines.slice(dataStart).filter(r => r.length > 5 && r[COL.NUM]).map(r => ({
@@ -408,29 +435,7 @@ function parseCSV(text) {
   }));
 }
 
-// ── Persistência de Dados ──────────────────────────────────────────────
-function saveToStorage(data, filename) {
-  localStorage.setItem('sol_estofados_data', JSON.stringify(data));
-  localStorage.setItem('sol_estofados_filename', filename);
-}
-
-function loadFromStorage() {
-  const savedData = localStorage.getItem('sol_estofados_data');
-  const savedFile = localStorage.getItem('sol_estofados_filename');
-  if (savedData) {
-    OS = JSON.parse(savedData);
-    onDataLoaded(savedFile || 'Dados salvos');
-  }
-}
-
 // ── Carregar arquivo ───────────────────────────────────────────────────
-function setupUploads() {
-  const inputs = ['csv-input-side', 'csv-input-top', 'csv-input-dz'];
-  inputs.forEach(id => {
-    $(id).addEventListener('change', (e) => handleFile(e.target.files[0]));
-  });
-}
-
 function handleFile(file) {
   if (!file || !file.name.endsWith('.csv')) return;
   const reader = new FileReader();
@@ -438,7 +443,6 @@ function handleFile(file) {
     try {
       OS = parseCSV(e.target.result);
       if (!OS.length) throw new Error('Nenhuma OS encontrada');
-      saveToStorage(OS, file.name); // Salva no LocalStorage
       onDataLoaded(file.name);
     } catch(err) {
       setSyncBadge('err', 'Erro no arquivo');
@@ -452,31 +456,28 @@ function onDataLoaded(filename) {
   setSyncBadge('ok', `${OS.length} OS carregadas`);
   $('data-info').style.display = 'block';
   $('data-info-text').innerHTML = `<strong>${OS.length} OS</strong> carregadas<br>${filename}`;
+
+  // Se estava na página de upload, vai pro dashboard
   if (currentPage === 'upload') navigateTo('dashboard');
   else renderCurrentPage();
 }
 
 // ── Navegação ──────────────────────────────────────────────────────────
 function navigateTo(page) {
-  if (!OS.length && page !== 'upload') { page = 'upload'; }
+  if (!OS.length && page !== 'upload') { navigateTo('upload'); return; }
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item[data-page]').forEach(n => n.classList.remove('active'));
   $(`page-${page}`)?.classList.add('active');
   document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
-  const titles = {upload:'Importar CSV',dashboard:'Dashboard',ordens:'Ordens de Serviço',historico:'Histórico',tecnicos:'Técnicos',relatorios:'Relatórios'};
+  const titles = {upload:'Importar CSV',dashboard:'Dashboard',ordens:'Ordens de Serviço',historico:'Histórico por Equipamento',tecnicos:'Técnicos',relatorios:'Relatórios'};
   setText('page-title', titles[page]||page);
   renderCurrentPage();
 }
 
-document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-  item.onclick = () => navigateTo(item.dataset.page);
-});
-
 function renderCurrentPage() {
-  if (currentPage === 'dashboard') renderDashboard();
-  if (currentPage === 'ordens') renderOS();
-  if (currentPage === 'historico') renderHistorico();
+  const r = {dashboard:renderDashboard,ordens:renderOS,historico:renderHistorico,tecnicos:renderTecnicos,relatorios:renderRelatorios};
+  r[currentPage]?.();
 }
 
 function setSyncBadge(type, msg) {
@@ -485,42 +486,37 @@ function setSyncBadge(type, msg) {
   el.textContent = msg;
 }
 
-// ── Dashboard Logic ────────────────────────────────────────────────────
-function setDashTab(tab, el) {
-  dashTab = tab;
-  document.querySelectorAll('#dash-tabs .tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderDashTable();
-}
-
+// ── Dashboard ──────────────────────────────────────────────────────────
 function renderDashboard() {
   const total = OS.length;
-  const conc = count(OS, x => x.status === 'Concluída');
-  const cor = count(OS, isCor);
-  const prev = count(OS, isPrev);
+  const conc  = count(OS, x => x.status === 'Concluída');
+  const cor   = count(OS, isCor);
+  const prev  = count(OS, isPrev);
   setText('kpi-total', total);
   setText('kpi-conc', conc);
-  setText('kpi-conc-pct', `${Math.round(conc/total*100 || 0)}% do total`);
+  setText('kpi-conc-pct', `${Math.round(conc/total*100)}% do total`);
   setText('kpi-cor', cor);
-  setText('kpi-cor-pct', `${Math.round(cor/total*100 || 0)}% do total`);
+  setText('kpi-cor-pct', `${Math.round(cor/total*100)}% do total`);
   setText('kpi-prev', prev);
-  setText('kpi-prev-pct', `${Math.round(prev/total*100 || 0)}% do total`);
+  setText('kpi-prev-pct', `${Math.round(prev/total*100)}% do total`);
   renderDashTable();
-  renderBar('setor-chart', sorted(groupBy(OS, x=>x.setor)).slice(0,6), '#2563EB');
+  renderBar('setor-chart',   sorted(groupBy(OS, x=>x.setor)).slice(0,6),   '#2563EB');
   renderBar('tecnico-chart', sorted(groupBy(OS, x=>x.tecnico)).slice(0,5), '#1D4ED8');
   renderTimeline();
+  renderBar('peca-chart',    sorted(groupBy(OS, x=>x.peca)).slice(0,5),    '#D97706');
+  renderStatusChart();
 }
 
 function renderDashTable() {
   let data = OS.slice().reverse();
-  if (dashTab === 'Corretiva') data = data.filter(isCor);
+  if (dashTab === 'Corretiva')  data = data.filter(isCor);
   if (dashTab === 'Preventiva') data = data.filter(isPrev);
   data = data.slice(0, 10);
   $('dash-tbody').innerHTML = data.map(x => `<tr>
     <td class="os-num">#${x.n}</td>
-    <td>${x.data}</td>
+    <td style="white-space:nowrap">${x.data}</td>
     <td>${x.setor}</td>
-    <td class="truncate" title="${x.equip}">${x.equip}</td>
+    <td class="truncate" style="max-width:120px" title="${x.equip}">${x.equip}</td>
     <td>${badgeTipo(x)}</td>
     <td>${x.tecnico}</td>
     <td>${badgeStatus(x.status)}</td>
@@ -528,11 +524,11 @@ function renderDashTable() {
 }
 
 function renderBar(id, data, color) {
-  const el = $(id); if(!el) return;
-  const max = data.length ? data[0][1] : 0;
+  const el = $(id); if(!el||!data.length) return;
+  const max = data[0][1];
   el.innerHTML = data.map(([label,val]) => `
     <div class="bar-row">
-      <div class="bar-label" title="${label}">${label}</div>
+      <div class="bar-label" title="${label}">${label||'—'}</div>
       <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/max*100)}%;background:${color}"></div></div>
       <div class="bar-val">${val}</div>
     </div>`).join('');
@@ -549,46 +545,52 @@ function renderTimeline() {
       </div>
       <div>
         <div class="tl-title">OS #${x.n} — ${x.equip}</div>
-        <div class="tl-time">${x.data} · ${x.tecnico||'—'}</div>
+        <div class="tl-time">${x.data} ${x.hora} · ${x.tecnico||'—'}</div>
       </div>
     </div>`).join('');
 }
 
-// ── Ordens de Serviço Logic ────────────────────────────────────────────
-function setOSFilter(filter, el) {
-  osFilter = filter;
-  document.querySelectorAll('#os-filters .filter-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  renderOS();
+function renderStatusChart() {
+  const g = groupBy(OS, x => x.status);
+  const colors = {'Concluída':'#16A34A','Em andamento':'#D97706','Aberta':'#2563EB','Urgente':'#DC2626'};
+  const max = Math.max(...Object.values(g));
+  $('status-chart').innerHTML = sorted(g).map(([label,val]) => `
+    <div class="bar-row">
+      <div class="bar-label">${label||'—'}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/max*100)}%;background:${colors[label]||'#6B7280'}"></div></div>
+      <div class="bar-val">${val}</div>
+    </div>`).join('');
 }
 
+// ── Ordens de Serviço ──────────────────────────────────────────────────
 function renderOS() {
   const search = ($('os-search')?.value||'').toLowerCase();
   let data = OS.slice().reverse();
   if (osFilter !== 'Todos') {
-    if (osFilter==='Corretiva') data = data.filter(isCor);
+    if (osFilter==='Corretiva')  data = data.filter(isCor);
     else if (osFilter==='Preventiva') data = data.filter(isPrev);
     else data = data.filter(x => x.status === osFilter);
   }
-  if (search) data = data.filter(x => Object.values(x).some(v => String(v).toLowerCase().includes(search)));
+  if (search) data = data.filter(x =>
+    [x.n, x.equip, x.setor, x.tecnico, x.falha, x.servico].some(f=>(f||'').toLowerCase().includes(search)));
 
   $('os-tbody').innerHTML = data.map(x => `<tr>
     <td class="os-num">#${x.n}</td>
-    <td>${x.data}</td>
+    <td style="white-space:nowrap">${x.data}</td>
     <td>${x.setor}</td>
-    <td class="truncate" title="${x.equip}">${x.equip}</td>
-    <td class="truncate" title="${x.falha}">${x.falha}</td>
+    <td class="truncate" style="max-width:130px" title="${x.equip}">${x.equip}</td>
+    <td class="truncate" style="max-width:130px" title="${x.falha}">${x.falha}</td>
     <td>${badgeTipo(x)}</td>
-    <td class="truncate" title="${x.servico}">${x.servico}</td>
-    <td>${x.tecnico}</td>
+    <td class="truncate" style="max-width:180px" title="${x.servico}">${x.servico}</td>
+    <td>${x.tecnico||'—'}</td>
     <td>${badgeStatus(x.status)}</td>
   </tr>`).join('') || '<tr><td colspan="9" class="empty">Nenhuma OS encontrada</td></tr>';
 
-  setText('os-count', `Mostrando ${data.length} de ${OS.length} ordens`);
+  setText('os-count', `Mostrando ${data.length} de ${OS.length} ordens de serviço`);
   setText('os-total-badge', `${OS.length} OS`);
 }
 
-// ── Histórico Logic ────────────────────────────────────────────────────
+// ── Histórico ──────────────────────────────────────────────────────────
 function renderHistorico() {
   const search = ($('hist-search')?.value||'').toLowerCase();
   const grupos = {};
@@ -605,17 +607,114 @@ function renderHistorico() {
         <span class="hist-group-name">${k}</span>
         <span class="hist-group-meta">${os.length} OS · ${os[0].setor}</span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Tipo</th><th>Serviço</th><th>Status</th></tr></thead>
-      <tbody>${os.map(x=>`<tr><td>#${x.n}</td><td>${x.data}</td><td>${badgeTipo(x)}</td><td>${x.servico}</td><td>${badgeStatus(x.status)}</td></tr>`).join('')}</tbody></table></div>
+      <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
+      <tbody>${os.map(x=>`<tr>
+        <td class="os-num">#${x.n}</td>
+        <td style="white-space:nowrap">${x.data}</td>
+        <td>${badgeTipo(x)}</td>
+        <td class="truncate" style="max-width:240px" title="${x.servico}">${x.servico}</td>
+        <td>${x.tecnico||'—'}</td>
+        <td>${badgeStatus(x.status)}</td>
+      </tr>`).join('')}</tbody></table></div>
     </div>`;
   }).join('');
 }
 
-// ── Inicialização ──────────────────────────────────────────────────────
-window.onload = () => {
-  setupUploads();
-  loadFromStorage(); // Tenta carregar dados salvos ao abrir o site
-};
+// ── Técnicos ───────────────────────────────────────────────────────────
+function renderTecnicos() {
+  const tecs = {};
+  OS.forEach(x => {
+    const t = (x.tecnico||'—').trim();
+    if(!tecs[t]) tecs[t]={total:0,cor:0,prev:0,conc:0,aberto:0};
+    tecs[t].total++;
+    if(isCor(x)) tecs[t].cor++; else tecs[t].prev++;
+    if(x.status==='Concluída') tecs[t].conc++;
+    else tecs[t].aberto++;
+  });
+  const entries = sorted(groupBy(OS, x=>(x.tecnico||'—').trim()));
+
+  $('tec-kpis').innerHTML = entries.slice(0,4).map(([tec,val]) => `
+    <div class="kpi"><div class="kpi-bar" style="background:#2563EB"></div>
+    <div class="kpi-label">${tec}</div>
+    <div class="kpi-val">${val}</div>
+    <div class="kpi-sub">OS realizadas</div></div>`).join('');
+
+  $('tec-tbody').innerHTML = entries.map(([tec]) => {
+    const t = tecs[tec];
+    return `<tr>
+      <td style="font-weight:700">${tec}</td>
+      <td>${t.total}</td><td>${t.cor}</td><td>${t.prev}</td>
+      <td><span class="badge b-conc">${t.conc}</span></td>
+      <td>${t.aberto>0?`<span class="badge b-ab">${t.aberto}</span>`:'—'}</td>
+    </tr>`;
+  }).join('');
+  renderBar('tec-chart', entries, '#1D4ED8');
+}
+
+// ── Relatórios ─────────────────────────────────────────────────────────
+function renderRelatorios() {
+  const setores = sorted(groupBy(OS, x=>x.setor));
+  const equips  = sorted(groupBy(OS, x=>x.equip));
+  const pecas   = sorted(groupBy(OS, x=>x.peca));
+  const tipos   = sorted(groupBy(OS, x=>x.tipo));
+  const total   = OS.length;
+
+  $('rel-setores').innerHTML = setores.slice(0,10).map(([k,v]) =>
+    `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
+  $('rel-equip').innerHTML = equips.slice(0,10).map(([k,v]) =>
+    `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
+  $('rel-pecas').innerHTML = pecas.slice(0,8).map(([k,v]) =>
+    `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
+  $('rel-tbody').innerHTML = tipos.map(([k,v]) =>
+    `<tr><td>${k}</td><td>${v}</td><td>${Math.round(v/total*100)}%</td></tr>`).join('');
+}
+
+// ── Eventos ────────────────────────────────────────────────────────────
+// Navegação sidebar
+document.querySelectorAll('.nav-item[data-page]').forEach(item =>
+  item.addEventListener('click', () => navigateTo(item.dataset.page)));
+
+// Links "Ver todos" / "Gerenciar"
+document.querySelectorAll('[data-goto]').forEach(el =>
+  el.addEventListener('click', () => navigateTo(el.dataset.goto)));
+
+// Inputs de arquivo
+['csv-input-side','csv-input-top','csv-input-dz'].forEach(id => {
+  $(id)?.addEventListener('change', e => handleFile(e.target.files[0]));
+});
+
+// Drag & Drop na drop zone
+const dz = $('drop-zone');
+if(dz) {
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('drag');
+    handleFile(e.dataTransfer.files[0]);
+  });
+}
+
+// Dashboard tabs
+document.querySelectorAll('#dash-tabs .tab').forEach(tab =>
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#dash-tabs .tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    dashTab = tab.dataset.filter || 'Todas';
+    renderDashTable();
+  }));
+
+// OS filters
+document.querySelectorAll('#os-filters .filter-btn').forEach(btn =>
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#os-filters .filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    osFilter = btn.dataset.filter || 'Todos';
+    renderOS();
+  }));
+
+// Search inputs
+$('os-search')?.addEventListener('input', renderOS);
+$('hist-search')?.addEventListener('input', renderHistorico);
 </script>
 </body>
 </html>
