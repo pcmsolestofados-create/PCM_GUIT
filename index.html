@@ -34,42 +34,6 @@
             font-size: 28px;
         }
         
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ddd;
-        }
-        
-        .tab-button {
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
-        
-        .tab-button.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }
-        
-        .tab-button:hover {
-            color: #667eea;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
         .filter-section {
             margin-bottom: 25px;
             display: flex;
@@ -160,7 +124,7 @@
             text-align: center;
         }
         
-        .status.concluído {
+        .status.concluido {
             background: #d4edda;
             color: #155724;
         }
@@ -180,7 +144,7 @@
             gap: 8px;
         }
         
-        .btn-editar, .btn-deletar {
+        .btn-editar, .btn-deletar, .btn-abrir {
             padding: 6px 12px;
             border: none;
             border-radius: 4px;
@@ -200,7 +164,12 @@
             color: white;
         }
         
-        .btn-editar:hover, .btn-deletar:hover {
+        .btn-abrir {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-editar:hover, .btn-deletar:hover, .btn-abrir:hover {
             opacity: 0.8;
         }
         
@@ -257,197 +226,64 @@
             color: #999;
             font-size: 16px;
         }
-        
-        /* Estilos para Relatórios */
-        .relatorio-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .card-relatorio {
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .card-relatorio:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        .card-titulo {
-            font-size: 18px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 15px;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 10px;
-        }
-        
-        .card-stat {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .card-stat:last-child {
-            border-bottom: none;
-        }
-        
-        .stat-label {
-            font-weight: 600;
-            color: #555;
-        }
-        
-        .stat-valor {
-            font-size: 20px;
-            font-weight: 700;
-            color: #667eea;
-        }
-        
-        .stat-valor.concluido {
-            color: #28a745;
-        }
-        
-        .stat-valor.pendente {
-            color: #ffc107;
-        }
-        
-        .stat-valor.progresso {
-            color: #0066cc;
-        }
-        
-        .tabela-relatorio {
-            margin-top: 30px;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 25px;
-            background: #eee;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: 600;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📋 Gerenciamento de Ordens de Serviço</h1>
+        <h1>📋 Ordens de Serviço</h1>
         
-        <!-- Abas de Navegação -->
-        <div class="tabs">
-            <button class="tab-button active" onclick="abrirAba('tab-ordens')">📊 Ordens de Serviço</button>
-            <button class="tab-button" onclick="abrirAba('tab-desempenho')">📈 Desempenho por Técnico</button>
-            <button class="tab-button" onclick="abrirAba('tab-distribuicao')">📦 Distribuição de OS</button>
-        </div>
-        
-        <!-- ABA 1: ORDENS DE SERVIÇO -->
-        <div id="tab-ordens" class="tab-content active">
-            <div class="filter-section">
-                <div class="filter-group">
-                    <label>Filtrar por Status:</label>
-                    <select id="filterStatus">
-                        <option value="">Todos</option>
-                        <option value="Concluído">Concluído</option>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Em Progresso">Em Progresso</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label>Filtrar por Técnico:</label>
-                    <select id="filterTecnico">
-                        <option value="">Todos</option>
-                        <option value="Lucas">Lucas</option>
-                        <option value="João">João</option>
-                        <option value="Diogeny">Diogeny</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label>Filtrar por Setor:</label>
-                    <input type="text" id="filterSetor" placeholder="Digite o setor">
-                </div>
-                
-                <button onclick="aplicarFiltros()">🔍 Filtrar</button>
-                <button onclick="limparFiltros()">🔄 Limpar Filtros</button>
-                <button onclick="novaOS()" style="background: #28a745;">➕ Nova OS</button>
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>Filtrar por Status:</label>
+                <select id="filterStatus">
+                    <option value="">Todos</option>
+                    <option value="Concluído">Concluído</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Em Progresso">Em Progresso</option>
+                </select>
             </div>
             
-            <div class="table-wrapper">
-                <table id="tabelaOS">
-                    <thead>
-                        <tr>
-                            <th>Nº OS</th>
-                            <th>Data</th>
-                            <th>Hora</th>
-                            <th>Solicitante</th>
-                            <th>Setor</th>
-                            <th>Equipamento</th>
-                            <th>Falha</th>
-                            <th>Intervenção</th>
-                            <th>Serviço</th>
-                            <th>Peças</th>
-                            <th>Segurança</th>
-                            <th>Indicação Seg.</th>
-                            <th>Colaborador</th>
-                            <th>Técnico</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpoTabela">
-                    </tbody>
-                </table>
-                <div id="semDados" class="sem-dados">Nenhuma ordem de serviço encontrada</div>
+            <div class="filter-group">
+                <label>Filtrar por Técnico:</label>
+                <input type="text" id="filterTecnico" placeholder="Digite o nome do técnico">
             </div>
+            
+            <div class="filter-group">
+                <label>Filtrar por Setor:</label>
+                <input type="text" id="filterSetor" placeholder="Digite o setor">
+            </div>
+            
+            <button onclick="aplicarFiltros()">🔍 Filtrar</button>
+            <button onclick="limparFiltros()">🔄 Limpar Filtros</button>
+            <button onclick="novaOS()" style="background: #28a745;">➕ Nova OS</button>
         </div>
         
-        <!-- ABA 2: DESEMPENHO POR TÉCNICO -->
-        <div id="tab-desempenho" class="tab-content">
-            <div class="relatorio-container" id="relatorioDesempenho">
-            </div>
-            <div class="table-wrapper tabela-relatorio">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Técnico</th>
-                            <th>Total de OS</th>
-                            <th>Concluídas</th>
-                            <th>Em Progresso</th>
-                            <th>Pendentes</th>
-                            <th>Taxa de Conclusão</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpoRelatorioDesempenho">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- ABA 3: DISTRIBUIÇÃO DE OS -->
-        <div id="tab-distribuicao" class="tab-content">
-            <div class="relatorio-container" id="relatorioDistribuicao">
-            </div>
+        <div class="table-wrapper">
+            <table id="tabelaOS">
+                <thead>
+                    <tr>
+                        <th>Nº OS</th>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Solicitante</th>
+                        <th>Setor</th>
+                        <th>Equipamento</th>
+                        <th>Falha</th>
+                        <th>Intervenção</th>
+                        <th>Serviço</th>
+                        <th>Peças</th>
+                        <th>Segurança</th>
+                        <th>Indicação Seg.</th>
+                        <th>Colaborador</th>
+                        <th>Técnico</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoTabela">
+                </tbody>
+            </table>
+            <div id="semDados" class="sem-dados">Nenhuma ordem de serviço encontrada</div>
         </div>
     </div>
     
@@ -463,11 +299,7 @@
                 </div>
                 <div class="form-group">
                     <label>Técnico:</label>
-                    <select id="editTecnico" required>
-                        <option value="Lucas">Lucas</option>
-                        <option value="João">João</option>
-                        <option value="Diogeny">Diogeny</option>
-                    </select>
+                    <input type="text" id="editTecnico" required>
                 </div>
                 <div class="form-group">
                     <label>Status:</label>
@@ -479,6 +311,16 @@
                 </div>
                 <button type="submit">Salvar Alterações</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal para Visualizar OS -->
+    <div id="modalVisualizarOS" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal('modalVisualizarOS')">&times;</span>
+            <h2>Detalhes da Ordem de Serviço</h2>
+            <div id="conteudoOS" style="line-height: 1.8;">
+            </div>
         </div>
     </div>
     
@@ -496,205 +338,26 @@
             PECA: 9,     // J - Peças reparadas
             SEG: 10,     // K - Segurança do equipamento
             SEG_INDIC: 11, // L - Indicação de segurança
-            COLAB: 12,   // M - Nome do colaborador (OPERADOR)
+            COLAB: 12,   // M - Nome do colaborador
             TECNICO: 13, // N - Técnico
             STATUS: 14   // O - Status da Ordens de serviço
         };
         
-        const TECNICOS = ['Lucas', 'João', 'Diogeny'];
         let dadosOS = [];
-        let dadosOSOriginais = [];
         let osEditando = null;
+        let dadosOriginais = [];
         
         // Simular dados do banco de dados
         function carregarDados() {
             dadosOS = [
-                ['OS001', '2024-01-15', '08:00', 'João Silva', 'Produção', 'CNC-001', 'Ruído anormal', 'Ajuste', 'Alinhamento do eixo', 'Mancal', 'OK', 'Sem risco', 'Pedro Santos', 'Lucas', 'Concluído'],
-                ['OS002', '2024-01-16', '09:30', 'Maria Costa', 'Manutenção', 'PRENSA-02', 'Vazamento', 'Reparo', 'Troca de vedação', 'Anel de vedação', 'OK', 'Sem risco', 'Ana Paula', 'João', 'Em Progresso'],
-                ['OS003', '2024-01-17', '10:15', 'Lucas Ferreira', 'Montagem', 'TORNO-03', 'Não inicia', 'Diagnóstico', 'Teste eletrônico', 'Nenhuma', 'Crítico', 'Parar máquina', 'Fernanda Silva', 'Diogeny', 'Pendente'],
-                ['OS004', '2024-01-18', '14:00', 'Carla Sousa', 'Produção', 'FRESA-04', 'Aquecimento', 'Limpeza', 'Limpeza interna', 'Filtro', 'OK', 'Sem risco', 'Bruno Costa', 'Lucas', 'Concluído'],
-                ['OS005', '2024-01-19', '11:45', 'Daniela Rocha', 'Logística', 'EMPILHADEIRA', 'Pneu furado', 'Reparo', 'Troca de pneu', 'Pneu 10x3', 'OK', 'Sem risco', 'Thiago Alves', 'João', 'Pendente'],
-                ['OS006', '2024-01-20', '13:20', 'Roberto Silva', 'Produção', 'TORNO-05', 'Vibração', 'Ajuste', 'Balanceamento', 'Contrapeso', 'OK', 'Sem risco', 'Marco Antônio', 'Diogeny', 'Concluído'],
-                ['OS007', '2024-01-21', '15:30', 'Patrícia Gomes', 'Manutenção', 'BOMBA-01', 'Ruído', 'Reparo', 'Troca de rolamento', 'Rolamento SKF', 'OK', 'Sem risco', 'Julio Pereira', 'Lucas', 'Em Progresso'],
-                ['OS008', '2024-01-22', '09:15', 'Fernando Rocha', 'Montagem', 'PRENSA-03', 'Não funciona', 'Diagnóstico', 'Teste de pressão', 'Nenhuma', 'Normal', 'Sem risco', 'Rodrigo Souza', 'João', 'Concluído']
+                ['OS001', '2024-01-15', '08:00', 'João Silva', 'Produção', 'CNC-001', 'Ruído anormal', 'Ajuste', 'Alinhamento do eixo', 'Mancal', 'OK', 'Sem risco', 'Pedro Santos', 'Carlos Oliveira', 'Concluído'],
+                ['OS002', '2024-01-16', '09:30', 'Maria Costa', 'Manutenção', 'PRENSA-02', 'Vazamento', 'Reparo', 'Troca de vedação', 'Anel de vedação', 'OK', 'Sem risco', 'Ana Paula', 'Roberto Lima', 'Em Progresso'],
+                ['OS003', '2024-01-17', '10:15', 'Lucas Ferreira', 'Montagem', 'TORNO-03', 'Não inicia', 'Diagnóstico', 'Teste eletrônico', 'Nenhuma', 'Crítico', 'Parar máquina', 'Fernanda Silva', 'Gustavo Reis', 'Pendente'],
+                ['OS004', '2024-01-18', '14:00', 'Carla Sousa', 'Produção', 'FRESA-04', 'Aquecimento', 'Limpeza', 'Limpeza interna', 'Filtro', 'OK', 'Sem risco', 'Bruno Costa', 'Marcelo Torres', 'Concluído'],
+                ['OS005', '2024-01-19', '11:45', 'Daniela Rocha', 'Logística', 'EMPILHADEIRA', 'Pneu furado', 'Reparo', 'Troca de pneu', 'Pneu 10x3', 'OK', 'Sem risco', 'Thiago Alves', 'Felipe Martins', 'Pendente']
             ];
-            dadosOSOriginais = JSON.parse(JSON.stringify(dadosOS));
+            dadosOriginais = JSON.parse(JSON.stringify(dadosOS));
             carregarTabela();
-            gerarRelatorios();
-        }
-        
-        // NAVEGAÇÃO DE ABAS
-        function abrirAba(nomeAba) {
-            // Esconder todas as abas
-            const abas = document.querySelectorAll('.tab-content');
-            abas.forEach(aba => aba.classList.remove('active'));
-            
-            // Desativar todos os botões
-            const botoes = document.querySelectorAll('.tab-button');
-            botoes.forEach(botao => botao.classList.remove('active'));
-            
-            // Mostrar aba selecionada
-            document.getElementById(nomeAba).classList.add('active');
-            event.target.classList.add('active');
-            
-            // Gerar relatórios se necessário
-            if (nomeAba === 'tab-desempenho' || nomeAba === 'tab-distribuicao') {
-                gerarRelatorios();
-            }
-        }
-        
-        // GERAR RELATÓRIOS
-        function gerarRelatorios() {
-            gerarRelatorioDesempenho();
-            gerarRelatorioDistribuicao();
-        }
-        
-        function gerarRelatorioDesempenho() {
-            const relatorio = {};
-            
-            // Inicializar contadores para cada técnico
-            TECNICOS.forEach(tecnico => {
-                relatorio[tecnico] = {
-                    total: 0,
-                    concluido: 0,
-                    progresso: 0,
-                    pendente: 0
-                };
-            });
-            
-            // Contar OS por técnico e status
-            dadosOSOriginais.forEach(os => {
-                const tecnico = os[INDICES.TECNICO];
-                const status = os[INDICES.STATUS];
-                
-                if (relatorio[tecnico]) {
-                    relatorio[tecnico].total++;
-                    
-                    if (status === 'Concluído') {
-                        relatorio[tecnico].concluido++;
-                    } else if (status === 'Em Progresso') {
-                        relatorio[tecnico].progresso++;
-                    } else if (status === 'Pendente') {
-                        relatorio[tecnico].pendente++;
-                    }
-                }
-            });
-            
-            // Renderizar cards
-            const container = document.getElementById('relatorioDesempenho');
-            container.innerHTML = TECNICOS.map(tecnico => {
-                const dados = relatorio[tecnico];
-                const taxa = dados.total > 0 ? ((dados.concluido / dados.total) * 100).toFixed(1) : 0;
-                
-                return `
-                    <div class="card-relatorio">
-                        <div class="card-titulo">👨‍🔧 ${tecnico}</div>
-                        <div class="card-stat">
-                            <span class="stat-label">Total de OS:</span>
-                            <span class="stat-valor">${dados.total}</span>
-                        </div>
-                        <div class="card-stat">
-                            <span class="stat-label">Concluídas:</span>
-                            <span class="stat-valor concluido">${dados.concluido}</span>
-                        </div>
-                        <div class="card-stat">
-                            <span class="stat-label">Em Progresso:</span>
-                            <span class="stat-valor progresso">${dados.progresso}</span>
-                        </div>
-                        <div class="card-stat">
-                            <span class="stat-label">Pendentes:</span>
-                            <span class="stat-valor pendente">${dados.pendente}</span>
-                        </div>
-                        <div class="card-stat" style="margin-top: 10px;">
-                            <span class="stat-label">Taxa de Conclusão:</span>
-                            <span class="stat-valor">${taxa}%</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${taxa}%">${taxa}%</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            // Renderizar tabela
-            const tbody = document.getElementById('corpoRelatorioDesempenho');
-            tbody.innerHTML = TECNICOS.map(tecnico => {
-                const dados = relatorio[tecnico];
-                const taxa = dados.total > 0 ? ((dados.concluido / dados.total) * 100).toFixed(1) : 0;
-                
-                return `
-                    <tr>
-                        <td><strong>${tecnico}</strong></td>
-                        <td>${dados.total}</td>
-                        <td><span class="status concluído">${dados.concluido}</span></td>
-                        <td><span class="status em-progresso">${dados.progresso}</span></td>
-                        <td><span class="status pendente">${dados.pendente}</span></td>
-                        <td><strong>${taxa}%</strong></td>
-                    </tr>
-                `;
-            }).join('');
-        }
-        
-        function gerarRelatorioDistribuicao() {
-            const setores = {};
-            const tecnicos = {};
-            
-            // Contar OS por setor
-            dadosOSOriginais.forEach(os => {
-                const setor = os[INDICES.SETOR];
-                const tecnico = os[INDICES.TECNICO];
-                
-                if (!setores[setor]) {
-                    setores[setor] = { total: 0, tecnicos: {} };
-                }
-                setores[setor].total++;
-                
-                if (!setores[setor].tecnicos[tecnico]) {
-                    setores[setor].tecnicos[tecnico] = 0;
-                }
-                setores[setor].tecnicos[tecnico]++;
-                
-                // Contar por técnico
-                if (!tecnicos[tecnico]) {
-                    tecnicos[tecnico] = { total: 0, setores: {} };
-                }
-                tecnicos[tecnico].total++;
-                
-                if (!tecnicos[tecnico].setores[setor]) {
-                    tecnicos[tecnico].setores[setor] = 0;
-                }
-                tecnicos[tecnico].setores[setor]++;
-            });
-            
-            // Renderizar por técnico
-            const container = document.getElementById('relatorioDistribuicao');
-            container.innerHTML = TECNICOS.map(tecnico => {
-                const dados = tecnicos[tecnico] || { total: 0, setores: {} };
-                
-                const detalhes = Object.entries(dados.setores)
-                    .map(([setor, qtd]) => {
-                        const percentual = ((qtd / dados.total) * 100).toFixed(0);
-                        return `
-                            <div class="card-stat">
-                                <span class="stat-label">${setor}:</span>
-                                <span class="stat-valor">${qtd} (${percentual}%)</span>
-                            </div>
-                        `;
-                    }).join('');
-                
-                return `
-                    <div class="card-relatorio">
-                        <div class="card-titulo">📦 ${tecnico}</div>
-                        <div class="card-stat">
-                            <span class="stat-label">Total de OS:</span>
-                            <span class="stat-valor">${dados.total}</span>
-                        </div>
-                        <hr style="margin: 10px 0; border: none; border-top: 1px solid #eee;">
-                        <div style="font-weight: 600; color: #555; margin: 10px 0;">Distribuição por Setor:</div>
-                        ${detalhes}
-                    </div>
-                `;
-            }).join('');
         }
         
         function carregarTabela() {
@@ -731,22 +394,52 @@
                     </td>
                     <td>
                         <div class="acoes">
-                            <button class="btn-editar" onclick="abrirEdicao(${index})">✏️ Editar</button>
-                            <button class="btn-deletar" onclick="deletarOS(${index})">🗑️ Deletar</button>
+                            <button class="btn-abrir" onclick="abrirOS(${index})" title="Visualizar OS">👁️ Abrir</button>
+                            <button class="btn-editar" onclick="abrirEdicao(${index})" title="Editar OS">✏️ Editar</button>
+                            <button class="btn-deletar" onclick="deletarOS(${index})" title="Deletar OS">🗑️ Deletar</button>
                         </div>
                     </td>
                 </tr>
             `).join('');
         }
         
+        function abrirOS(index) {
+            const os = dadosOS[index];
+            const conteudo = `
+                <p><strong>Nº OS:</strong> ${os[INDICES.NUM]}</p>
+                <p><strong>Data:</strong> ${os[INDICES.DATA]}</p>
+                <p><strong>Hora:</strong> ${os[INDICES.HORA]}</p>
+                <p><strong>Solicitante:</strong> ${os[INDICES.SOL]}</p>
+                <p><strong>Setor:</strong> ${os[INDICES.SETOR]}</p>
+                <p><strong>Equipamento:</strong> ${os[INDICES.EQUIP]}</p>
+                <p><strong>Falha Apresentada:</strong> ${os[INDICES.FALHA]}</p>
+                <p><strong>Intervenção Realizada:</strong> ${os[INDICES.TIPO]}</p>
+                <p><strong>Serviço Realizado:</strong> ${os[INDICES.SERVICO]}</p>
+                <p><strong>Peças Reparadas:</strong> ${os[INDICES.PECA]}</p>
+                <p><strong>Segurança do Equipamento:</strong> ${os[INDICES.SEG]}</p>
+                <p><strong>Indicação de Segurança:</strong> ${os[INDICES.SEG_INDIC]}</p>
+                <p><strong>Colaborador:</strong> ${os[INDICES.COLAB]}</p>
+                <p><strong>Técnico:</strong> ${os[INDICES.TECNICO]}</p>
+                <p><strong>Status:</strong> ${os[INDICES.STATUS]}</p>
+                <hr style="margin: 20px 0;">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1" 
+                   target="_blank" 
+                   style="display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; margin-top: 10px;">
+                   📝 Abrir Formulário de OS
+                </a>
+            `;
+            document.getElementById('conteudoOS').innerHTML = conteudo;
+            document.getElementById('modalVisualizarOS').style.display = 'block';
+        }
+        
         function aplicarFiltros() {
             const status = document.getElementById('filterStatus').value;
-            const tecnico = document.getElementById('filterTecnico').value;
+            const tecnico = document.getElementById('filterTecnico').value.toLowerCase();
             const setor = document.getElementById('filterSetor').value.toLowerCase();
             
-            dadosOS = dadosOSOriginais.filter(os => {
+            dadosOS = dadosOriginais.filter(os => {
                 const statusMatch = !status || os[INDICES.STATUS] === status;
-                const tecnicoMatch = !tecnico || os[INDICES.TECNICO] === tecnico;
+                const tecnicoMatch = !tecnico || os[INDICES.TECNICO].toLowerCase().includes(tecnico);
                 const setorMatch = !setor || os[INDICES.SETOR].toLowerCase().includes(setor);
                 
                 return statusMatch && tecnicoMatch && setorMatch;
@@ -759,8 +452,7 @@
             document.getElementById('filterStatus').value = '';
             document.getElementById('filterTecnico').value = '';
             document.getElementById('filterSetor').value = '';
-            dadosOS = JSON.parse(JSON.stringify(dadosOSOriginais));
-            carregarTabela();
+            carregarDados();
         }
         
         function abrirEdicao(index) {
@@ -780,30 +472,32 @@
             e.preventDefault();
             dadosOS[osEditando][INDICES.TECNICO] = document.getElementById('editTecnico').value;
             dadosOS[osEditando][INDICES.STATUS] = document.getElementById('editStatus').value;
-            dadosOSOriginais[osEditando][INDICES.TECNICO] = document.getElementById('editTecnico').value;
-            dadosOSOriginais[osEditando][INDICES.STATUS] = document.getElementById('editStatus').value;
+            dadosOriginais[osEditando][INDICES.TECNICO] = document.getElementById('editTecnico').value;
+            dadosOriginais[osEditando][INDICES.STATUS] = document.getElementById('editStatus').value;
             fecharModal('modalEditar');
             carregarTabela();
-            gerarRelatorios();
         });
         
         function deletarOS(index) {
             if (confirm('Tem certeza que deseja deletar esta OS?')) {
                 dadosOS.splice(index, 1);
-                dadosOSOriginais.splice(index, 1);
+                dadosOriginais.splice(index, 1);
                 carregarTabela();
-                gerarRelatorios();
             }
         }
         
         function novaOS() {
-            alert('Função de nova OS a ser implementada');
+            window.open('https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1', '_blank');
         }
         
         window.onclick = function(event) {
-            const modal = document.getElementById('modalEditar');
-            if (event.target === modal) {
-                modal.style.display = 'none';
+            const modalEditar = document.getElementById('modalEditar');
+            const modalVisualizar = document.getElementById('modalVisualizarOS');
+            if (event.target === modalEditar) {
+                modalEditar.style.display = 'none';
+            }
+            if (event.target === modalVisualizar) {
+                modalVisualizar.style.display = 'none';
             }
         };
         
