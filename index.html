@@ -122,9 +122,10 @@
             border-radius: 5px;
             font-weight: 600;
             text-align: center;
+            display: inline-block;
         }
         
-        .status.concluido {
+        .status.concluído {
             background: #d4edda;
             color: #155724;
         }
@@ -311,35 +312,38 @@
     
     <script>
         const INDICES = {
-            NUM: 0,      // A - Nº OS
-            DATA: 1,     // B - Data
-            HORA: 2,     // C - Hora
-            SOL: 3,      // D - Solicitante
-            SETOR: 4,    // E - Setor
-            EQUIP: 5,    // F - Equipamento
-            FALHA: 6,    // G - Falha apresentada
-            TIPO: 7,     // H - Intervenção Realizada
-            SERVICO: 8,  // I - Serviço Realizado
-            PECA: 9,     // J - Peças reparadas
-            SEG: 10,     // K - Segurança do equipamento
+            NUM: 0,        // A - Nº OS
+            DATA: 1,       // B - Data
+            HORA: 2,       // C - Hora
+            SOL: 3,        // D - Solicitante
+            SETOR: 4,      // E - Setor
+            EQUIP: 5,      // F - Equipamento
+            FALHA: 6,      // G - Falha apresentada
+            TIPO: 7,       // H - Intervenção Realizada
+            SERVICO: 8,    // I - Serviço Realizado
+            PECA: 9,       // J - Peças reparadas
+            SEG: 10,       // K - Segurança do equipamento
             SEG_INDIC: 11, // L - Indicação de segurança
-            COLAB: 12,   // M - Nome do colaborador
-            TECNICO: 13, // N - Técnico ← CORRIGIDO PARA 13
-            STATUS: 14   // O - Status da Ordens de serviço
+            COLAB: 12,     // M - Nome do colaborador
+            TECNICO: 13,   // N - Técnico
+            STATUS: 14     // O - Status da Ordens de serviço
         };
         
         let dadosOS = [];
+        let dadosOSBackup = []; // Backup para restaurar dados originais
         let osEditando = null;
         
         // Simular dados do banco de dados
         function carregarDados() {
-            dadosOS = [
+            dadosOSBackup = [
                 ['OS001', '2024-01-15', '08:00', 'João Silva', 'Produção', 'CNC-001', 'Ruído anormal', 'Ajuste', 'Alinhamento do eixo', 'Mancal', 'OK', 'Sem risco', 'Pedro Santos', 'Carlos Oliveira', 'Concluído'],
                 ['OS002', '2024-01-16', '09:30', 'Maria Costa', 'Manutenção', 'PRENSA-02', 'Vazamento', 'Reparo', 'Troca de vedação', 'Anel de vedação', 'OK', 'Sem risco', 'Ana Paula', 'Roberto Lima', 'Em Progresso'],
                 ['OS003', '2024-01-17', '10:15', 'Lucas Ferreira', 'Montagem', 'TORNO-03', 'Não inicia', 'Diagnóstico', 'Teste eletrônico', 'Nenhuma', 'Crítico', 'Parar máquina', 'Fernanda Silva', 'Gustavo Reis', 'Pendente'],
                 ['OS004', '2024-01-18', '14:00', 'Carla Sousa', 'Produção', 'FRESA-04', 'Aquecimento', 'Limpeza', 'Limpeza interna', 'Filtro', 'OK', 'Sem risco', 'Bruno Costa', 'Marcelo Torres', 'Concluído'],
                 ['OS005', '2024-01-19', '11:45', 'Daniela Rocha', 'Logística', 'EMPILHADEIRA', 'Pneu furado', 'Reparo', 'Troca de pneu', 'Pneu 10x3', 'OK', 'Sem risco', 'Thiago Alves', 'Felipe Martins', 'Pendente']
             ];
+            // Fazer cópia profunda dos dados
+            dadosOS = dadosOSBackup.map(row => [...row]);
             carregarTabela();
         }
         
@@ -354,44 +358,54 @@
             }
             
             semDados.style.display = 'none';
-            tabela.innerHTML = dadosOS.map((os, index) => `
-                <tr>
-                    <td>${os[INDICES.NUM]}</td>
-                    <td>${os[INDICES.DATA]}</td>
-                    <td>${os[INDICES.HORA]}</td>
-                    <td>${os[INDICES.SOL]}</td>
-                    <td>${os[INDICES.SETOR]}</td>
-                    <td>${os[INDICES.EQUIP]}</td>
-                    <td>${os[INDICES.FALHA]}</td>
-                    <td>${os[INDICES.TIPO]}</td>
-                    <td>${os[INDICES.SERVICO]}</td>
-                    <td>${os[INDICES.PECA]}</td>
-                    <td>${os[INDICES.SEG]}</td>
-                    <td>${os[INDICES.SEG_INDIC]}</td>
-                    <td>${os[INDICES.COLAB]}</td>
-                    <td><strong>${os[INDICES.TECNICO]}</strong></td>
-                    <td>
-                        <span class="status ${os[INDICES.STATUS].toLowerCase().replace(' ', '-')}">
-                            ${os[INDICES.STATUS]}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="acoes">
-                            <button class="btn-editar" onclick="abrirEdicao(${index})">✏️ Editar</button>
-                            <button class="btn-deletar" onclick="deletarOS(${index})">🗑️ Deletar</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+            tabela.innerHTML = dadosOS.map((os, index) => {
+                // Normalizar o status para a classe CSS
+                const statusClass = os[INDICES.STATUS]
+                    .toLowerCase()
+                    .replace(/\s+/g, '-');
+                
+                return `
+                    <tr>
+                        <td>${os[INDICES.NUM]}</td>
+                        <td>${os[INDICES.DATA]}</td>
+                        <td>${os[INDICES.HORA]}</td>
+                        <td>${os[INDICES.SOL]}</td>
+                        <td>${os[INDICES.SETOR]}</td>
+                        <td>${os[INDICES.EQUIP]}</td>
+                        <td>${os[INDICES.FALHA]}</td>
+                        <td>${os[INDICES.TIPO]}</td>
+                        <td>${os[INDICES.SERVICO]}</td>
+                        <td>${os[INDICES.PECA]}</td>
+                        <td>${os[INDICES.SEG]}</td>
+                        <td>${os[INDICES.SEG_INDIC]}</td>
+                        <td>${os[INDICES.COLAB]}</td>
+                        <td><strong>${os[INDICES.TECNICO]}</strong></td>
+                        <td>
+                            <span class="status ${statusClass}">
+                                ${os[INDICES.STATUS]}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="acoes">
+                                <button class="btn-editar" onclick="abrirEdicao(${index})">✏️ Editar</button>
+                                <button class="btn-deletar" onclick="deletarOS(${index})">🗑️ Deletar</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
         
         function aplicarFiltros() {
-            const status = document.getElementById('filterStatus').value;
-            const tecnico = document.getElementById('filterTecnico').value.toLowerCase();
-            const setor = document.getElementById('filterSetor').value.toLowerCase();
+            const status = document.getElementById('filterStatus').value.toLowerCase();
+            const tecnico = document.getElementById('filterTecnico').value.toLowerCase().trim();
+            const setor = document.getElementById('filterSetor').value.toLowerCase().trim();
+            
+            // Restaurar dados originais antes de filtrar
+            dadosOS = dadosOSBackup.map(row => [...row]);
             
             dadosOS = dadosOS.filter(os => {
-                const statusMatch = !status || os[INDICES.STATUS] === status;
+                const statusMatch = !status || os[INDICES.STATUS].toLowerCase() === status;
                 const tecnicoMatch = !tecnico || os[INDICES.TECNICO].toLowerCase().includes(tecnico);
                 const setorMatch = !setor || os[INDICES.SETOR].toLowerCase().includes(setor);
                 
@@ -423,15 +437,38 @@
         
         document.getElementById('formEditar').addEventListener('submit', function(e) {
             e.preventDefault();
-            dadosOS[osEditando][INDICES.TECNICO] = document.getElementById('editTecnico').value;
-            dadosOS[osEditando][INDICES.STATUS] = document.getElementById('editStatus').value;
+            
+            if (osEditando !== null && osEditando !== undefined) {
+                dadosOS[osEditando][INDICES.TECNICO] = document.getElementById('editTecnico').value.trim();
+                dadosOS[osEditando][INDICES.STATUS] = document.getElementById('editStatus').value;
+                
+                // Atualizar também no backup para não perder dados na próxima filtragem
+                const osNum = dadosOS[osEditando][INDICES.NUM];
+                const indexBackup = dadosOSBackup.findIndex(o => o[INDICES.NUM] === osNum);
+                if (indexBackup !== -1) {
+                    dadosOSBackup[indexBackup][INDICES.TECNICO] = dadosOS[osEditando][INDICES.TECNICO];
+                    dadosOSBackup[indexBackup][INDICES.STATUS] = dadosOS[osEditando][INDICES.STATUS];
+                }
+            }
+            
             fecharModal('modalEditar');
             carregarTabela();
+            osEditando = null;
         });
         
         function deletarOS(index) {
             if (confirm('Tem certeza que deseja deletar esta OS?')) {
+                const osNum = dadosOS[index][INDICES.NUM];
+                
+                // Deletar do array de trabalho
                 dadosOS.splice(index, 1);
+                
+                // Deletar do backup também
+                const indexBackup = dadosOSBackup.findIndex(o => o[INDICES.NUM] === osNum);
+                if (indexBackup !== -1) {
+                    dadosOSBackup.splice(indexBackup, 1);
+                }
+                
                 carregarTabela();
             }
         }
