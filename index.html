@@ -40,6 +40,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .sync-status{font-size:9px;color:rgba(255,255,255,0.5);margin-top:4px;}
 .sync-status.synced{color:#93C5FD;}
 .sync-status.error{color:#FCA5A5;}
+.sheet-link-btn{display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 12px 8px;padding:10px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);border-radius:8px;color:rgba(255,255,255,0.8);cursor:pointer;font-size:11px;font-weight:600;transition:all .15s;text-decoration:none;width:calc(100% - 24px);}
+.sheet-link-btn:hover{background:rgba(16,185,129,0.25);color:#fff;}
+.sheet-link-btn svg{width:14px;height:14px;}
 @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
 /* MAIN */
@@ -56,10 +59,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .btn{font-size:12px;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;font-weight:600;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
 .btn-primary{background:var(--accent);color:#fff;}
 .btn-primary:hover{background:var(--accent2);}
-.btn-success{background:var(--green);color:#fff;}
-.btn-success:hover{background:#15803d;}
 .btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text);}
 .btn-ghost:hover{background:#F9FAFB;}
+.btn-sheet{background:#10B981;color:#fff;}
+.btn-sheet:hover{background:#059669;}
 .avatar{width:30px;height:30px;border-radius:50%;background:#1D4ED8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
 
 /* CONTENT */
@@ -173,9 +176,6 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
 .btn-modal-cancel:hover{background:#D1D5DB;}
 .btn-modal-confirm{background:var(--accent);color:#fff;}
 .btn-modal-confirm:hover{background:var(--accent2);}
-
-/* HEADER ACTIONS */
-.header-actions{display:flex;gap:8px;align-items:center;}
 </style>
 </head>
 <body>
@@ -197,6 +197,16 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
       <p id="data-info-text"></p>
       <div class="sync-status" id="sync-status"></div>
     </div>
+
+    <!-- Botão para ir para a planilha -->
+    <a class="sheet-link-btn" href="https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676" target="_blank" title="Abrir planilha no Google Sheets">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Abrir planilha
+    </a>
 
     <div class="nav-sec">Principal</div>
     <div class="nav-item active" data-page="dashboard">
@@ -230,16 +240,18 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
         <span class="sync-badge idle" id="sync-badge">Sincronizando...</span>
       </div>
       <div class="topbar-r">
-        <div class="header-actions">
-          <button class="btn btn-ghost" onclick="reloadData()" title="Recarregar dados">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v5h5M15 12v-5h-5"/><path d="M2.5 7c1-2 3-3 5.5-3 4 0 7 3 7 7s-3 7-7 7-7-3-7-7"/></svg>
-            Recarregar
-          </button>
-          <button class="btn btn-success" onclick="abrirNovaOS()" title="Abrir nova ordem de serviço">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
-            Nova OS
-          </button>
-        </div>
+        <button class="btn btn-sheet" onclick="goToSheet()" title="Abrir planilha no Google Sheets">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Planilha
+        </button>
+        <button class="btn btn-ghost" onclick="reloadData()" title="Recarregar dados">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v5h5M15 12v-5h-5"/><path d="M2.5 7c1-2 3-3 5.5-3 4 0 7 3 7 7s-3 7-7 7-7-3-7-7"/></svg>
+          Recarregar
+        </button>
         <div class="avatar">LS</div>
       </div>
     </div>
@@ -352,11 +364,10 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
 
 <script>
 // ── CONFIGURAÇÃO DO GOOGLE SHEETS ──────────────────────────────────────
-// URL do seu Google Sheets publicado
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?output=csv&gid=1256614582';
-
-// URL do formulário Google Forms para abrir nova OS
-const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
+// URL da planilha publicada
+const SHEET_ID = '1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ';
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=114888676`;
+const SHEET_EDIT_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit?gid=114888676#gid=114888676`;
 
 // ── MAPEAMENTO DE COLUNAS (Conforme sua estrutura) ──────────────────────
 const COL = {
@@ -392,9 +403,9 @@ const count   = (arr, fn) => arr.filter(fn).length;
 const isCor   = x => (x.tipo||'').toLowerCase().includes('corretiva');
 const isPrev  = x => (x.tipo||'').toLowerCase().includes('preventiva');
 
-// ── ABRIR FORMULÁRIO DE NOVA OS ────────────────────────────────────────
-function abrirNovaOS() {
-  window.open(FORM_URL, '_blank', 'width=800,height=600');
+// ── IR PARA PLANILHA ────────────────────────────────────────────────────
+function goToSheet() {
+  window.open(SHEET_EDIT_URL, '_blank');
 }
 
 // ── CARREGAR DADOS DO GOOGLE SHEETS ────────────────────────────────────
