@@ -30,20 +30,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .nav-item:hover{color:#fff;background:rgba(255,255,255,0.04);}
 .nav-item.active{color:#fff;background:rgba(37,99,235,0.2);border-left-color:#2563EB;}
 .nav-item svg{width:15px;height:15px;flex-shrink:0;}
-.upload-indicator{margin:12px 12px 8px;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.4);border-radius:8px;padding:12px;text-align:center;}
-.upload-indicator .upload-icon{font-size:20px;margin-bottom:4px;}
-.upload-indicator p{font-size:11px;color:rgba(255,255,255,0.6);line-height:1.4;}
-.upload-indicator strong{color:#93C5FD;}
+.sync-indicator{margin:12px 12px 8px;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.4);border-radius:8px;padding:12px;text-align:center;}
+.sync-indicator .sync-icon{font-size:20px;margin-bottom:4px;animation:spin 2s linear infinite;}
+.sync-indicator p{font-size:11px;color:rgba(255,255,255,0.6);line-height:1.4;}
+.sync-indicator strong{color:#93C5FD;}
 .data-info{margin:0 12px 12px;padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:6px;}
 .data-info p{font-size:10px;color:rgba(255,255,255,0.4);line-height:1.5;}
 .data-info strong{color:rgba(255,255,255,0.7);}
-.upload-status{font-size:9px;color:rgba(255,255,255,0.5);margin-top:4px;}
-.upload-status.loaded{color:#93C5FD;}
-.upload-status.error{color:#FCA5A5;}
-.upload-btn{display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 12px 8px;padding:10px;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.4);border-radius:8px;color:rgba(255,255,255,0.8);cursor:pointer;font-size:11px;font-weight:600;transition:all .15s;text-decoration:none;width:calc(100% - 24px);}
-.upload-btn:hover{background:rgba(37,99,235,0.25);color:#fff;}
-.upload-btn svg{width:14px;height:14px;}
-#csv-file{display:none;}
+.sync-status{font-size:9px;color:rgba(255,255,255,0.5);margin-top:4px;}
+.sync-status.synced{color:#93C5FD;}
+.sync-status.error{color:#FCA5A5;}
+.sheet-link-btn{display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 12px 8px;padding:10px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);border-radius:8px;color:rgba(255,255,255,0.8);cursor:pointer;font-size:11px;font-weight:600;transition:all .15s;text-decoration:none;width:calc(100% - 24px);}
+.sheet-link-btn:hover{background:rgba(16,185,129,0.25);color:#fff;}
+.sheet-link-btn svg{width:14px;height:14px;}
 @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
 /* MAIN */
@@ -54,7 +53,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .sync-badge{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:600;}
 .sync-badge.ok{background:var(--green-bg);color:var(--green);}
 .sync-badge.idle{background:#F3F4F6;color:var(--muted);}
-.sync-badge.loaded{background:var(--green-bg);color:var(--green);}
+.sync-badge.syncing{background:#FEF3C7;color:var(--amber);}
 .sync-badge.err{background:var(--red-bg);color:var(--red);}
 .topbar-r{display:flex;align-items:center;gap:8px;}
 .btn{font-size:12px;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;font-weight:600;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
@@ -62,6 +61,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .btn-primary:hover{background:var(--accent2);}
 .btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text);}
 .btn-ghost:hover{background:#F9FAFB;}
+.btn-sheet{background:#10B981;color:#fff;}
+.btn-sheet:hover{background:#059669;}
 .btn-form{background:#6366F1;color:#fff;}
 .btn-form:hover{background:#4F46E5;}
 .avatar{width:30px;height:30px;border-radius:50%;background:#1D4ED8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
@@ -75,15 +76,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .loading-spinner{width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--accent);border-radius:50%;margin:0 auto 20px;animation:spin 1s linear infinite;}
 .loading-container h2{font-size:22px;font-weight:700;color:var(--text);margin-bottom:12px;}
 .loading-container p{font-size:13px;color:var(--muted);}
-
-/* UPLOAD AREA */
-.upload-area{max-width:560px;margin:50px auto;text-align:center;padding:40px;border:2px dashed var(--border2);border-radius:var(--radius);background:#F9FAFB;}
-.upload-area.dragover{border-color:var(--accent);background:#DBEAFE;}
-.upload-icon-lg{font-size:48px;margin-bottom:16px;}
-.upload-area h2{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;}
-.upload-area p{font-size:13px;color:var(--muted);margin-bottom:20px;}
-.upload-btn-file{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);cursor:pointer;font-weight:600;font-size:13px;transition:all .15s;}
-.upload-btn-file:hover{background:var(--accent2);}
 
 /* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px;}
@@ -198,26 +190,25 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
       <div class="logo-sub">Sistema de Manutenção</div>
     </div>
 
-    <!-- Upload de CSV -->
-    <div class="upload-indicator" id="upload-indicator">
-      <div class="upload-icon">📁</div>
-      <p><strong>Nenhum arquivo carregado</strong><br>Carregue um arquivo CSV para começar</p>
+    <!-- Sincronização com Google Sheets -->
+    <div class="sync-indicator" id="sync-indicator">
+      <div class="sync-icon">📊</div>
+      <p><strong>Conectando...</strong><br>Sincronizando com<br>Google Sheets</p>
     </div>
     <div class="data-info" id="data-info" style="display:none">
       <p id="data-info-text"></p>
-      <div class="upload-status" id="upload-status"></div>
+      <div class="sync-status" id="sync-status"></div>
     </div>
 
-    <!-- Botão para carregar CSV -->
-    <button class="upload-btn" onclick="triggerFileUpload()" title="Carregar arquivo CSV">
+    <!-- Botão para ir para a planilha -->
+    <a class="sheet-link-btn" href="https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676" target="_blank" title="Abrir planilha no Google Sheets">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="17 8 12 3 7 8"/>
-        <line x1="12" y1="3" x2="12" y2="15"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
       </svg>
-      Carregar CSV
-    </button>
-    <input type="file" id="csv-file" accept=".csv" onchange="handleFileUpload(event)">
+      Abrir planilha
+    </a>
 
     <div class="nav-sec">Principal</div>
     <div class="nav-item active" data-page="dashboard">
@@ -248,16 +239,24 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
     <div class="topbar">
       <div class="topbar-l">
         <div class="topbar-title" id="page-title">Carregando...</div>
-        <span class="sync-badge idle" id="sync-badge">Sem dados</span>
+        <span class="sync-badge idle" id="sync-badge">Sincronizando...</span>
       </div>
       <div class="topbar-r">
-        <button class="btn btn-form" onclick="triggerFileUpload()" title="Carregar novo arquivo CSV">
+        <button class="btn btn-form" onclick="openForm()" title="Abrir formulário para nova OS">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 5v14M5 12h14"/>
           </svg>
-          Carregar CSV
+          Nova OS
         </button>
-        <button class="btn btn-ghost" onclick="reloadData()" title="Recarregar dados" id="reload-btn" style="display:none;">
+        <button class="btn btn-sheet" onclick="goToSheet()" title="Abrir planilha no Google Sheets">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Planilha
+        </button>
+        <button class="btn btn-ghost" onclick="reloadData()" title="Recarregar dados">
           <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v5h5M15 12v-5h-5"/><path d="M2.5 7c1-2 3-3 5.5-3 4 0 7 3 7 7s-3 7-7 7-7-3-7-7"/></svg>
           Recarregar
         </button>
@@ -267,29 +266,12 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
 
     <div class="content">
 
-      <!-- UPLOAD PAGE -->
-      <div class="page active" id="page-upload">
-        <div class="upload-area" onclick="triggerFileUpload()">
-          <div class="upload-icon-lg">📊</div>
-          <h2>Carregue seu arquivo CSV</h2>
-          <p>Clique aqui ou arraste um arquivo CSV com suas ordens de serviço</p>
-          <button class="upload-btn-file" onclick="event.stopPropagation(); triggerFileUpload()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-            Selecione um arquivo
-          </button>
-        </div>
-      </div>
-
       <!-- LOADING PAGE -->
-      <div class="page" id="page-loading">
+      <div class="page active" id="page-loading">
         <div class="loading-container">
           <div class="loading-spinner"></div>
-          <h2>Processando arquivo...</h2>
-          <p>Analisando dados do CSV. Isso pode levar alguns segundos.</p>
+          <h2>Carregando dados...</h2>
+          <p>Sincronizando com sua planilha Google Sheets. Isso pode levar alguns segundos.</p>
         </div>
       </div>
 
@@ -389,6 +371,12 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
 </div><!-- /app -->
 
 <script>
+// ── CONFIGURAÇÃO DO GOOGLE SHEETS ──────────────────────────────────────
+// URL da planilha publicada (nova)
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?gid=1256614582&single=true&output=csv';
+const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676';
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
+
 // ── MAPEAMENTO DE COLUNAS (Conforme sua estrutura) ──────────────────────
 const COL = {
   NUM:      0,   // A - Nº OS
@@ -412,8 +400,7 @@ const COL = {
 let OS = [];
 let osFilter = 'Todos';
 let dashTab  = 'Todas';
-let currentPage = 'upload';
-let currentFilename = '';
+let currentPage = 'dashboard';
 
 // ── HELPERS ────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -424,43 +411,38 @@ const count   = (arr, fn) => arr.filter(fn).length;
 const isCor   = x => (x.tipo||'').toLowerCase().includes('corretiva');
 const isPrev  = x => (x.tipo||'').toLowerCase().includes('preventiva');
 
-// ── TRIGGER UPLOAD ─────────────────────────────────────────────────────
-function triggerFileUpload() {
-  $('csv-file').click();
+// ── ABRIR FORMULÁRIO ───────────────────────────────────────────────────
+function openForm() {
+  window.open(FORM_URL, '_blank');
 }
 
-// ── HANDLE FILE UPLOAD ─────────────────────────────────────────────────
-function handleFileUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+// ── IR PARA PLANILHA ────────────────────────────────────────────────────
+function goToSheet() {
+  window.open(SHEET_EDIT_URL, '_blank');
+}
 
-  currentFilename = file.name;
-  const reader = new FileReader();
-  
-  reader.onload = (e) => {
-    try {
-      showPage('loading');
-      setTimeout(() => {
-        const csvText = e.target.result;
-        OS = parseCSV(csvText);
-        
-        if (!OS.length) throw new Error('Nenhuma OS encontrada no arquivo');
-        
-        setUploadBadge('loaded', `${OS.length} OS carregadas`);
-        updateStorageInfo();
-        showPage('dashboard');
-        renderCurrentPage();
-        
-      }, 300);
-    } catch (error) {
-      console.error('❌ Erro ao carregar CSV:', error);
-      setUploadBadge('err', 'Erro ao carregar arquivo');
-      alert('Erro ao processar arquivo CSV: ' + error.message);
-      showPage('upload');
-    }
-  };
-  
-  reader.readAsText(file);
+// ── CARREGAR DADOS DO GOOGLE SHEETS ────────────────────────────────────
+async function loadGoogleSheets() {
+  try {
+    setSyncBadge('syncing', 'Sincronizando...');
+    
+    const response = await fetch(SHEET_URL);
+    const csvText = await response.text();
+    
+    OS = parseCSV(csvText);
+    
+    if (!OS.length) throw new Error('Nenhuma OS encontrada na planilha');
+    
+    setSyncBadge('ok', `${OS.length} OS carregadas`);
+    updateStorageInfo();
+    showPage('dashboard');
+    renderCurrentPage();
+    
+  } catch (error) {
+    console.error('❌ Erro ao carregar Google Sheets:', error);
+    setSyncBadge('err', 'Erro ao carregar dados');
+    alert('Erro ao conectar com Google Sheets: ' + error.message);
+  }
 }
 
 // ── PARSER CSV ─────────────────────────────────────────────────────────
@@ -498,16 +480,15 @@ function parseCSV(text) {
 function updateStorageInfo() {
   if (OS.length > 0) {
     const timestamp = new Date().toLocaleString('pt-BR');
-    const infoText = `<strong>${OS.length} OS</strong> do arquivo<br><em>${currentFilename}</em><br>Carregado em: ${timestamp}`;
+    const infoText = `<strong>${OS.length} OS</strong> carregadas<br>Atualizado em: ${timestamp}`;
     $('data-info').style.display = 'block';
     $('data-info-text').innerHTML = infoText;
-    $('upload-indicator').style.display = 'none';
-    $('reload-btn').style.display = 'inline-flex';
+    $('sync-indicator').style.display = 'none';
   }
 }
 
-// ── ATUALIZAR BADGE DE UPLOAD ──────────────────────────────────────────
-function setUploadBadge(type, msg) {
+// ── ATUALIZAR BADGE DE SINCRONIZAÇÃO ───────────────────────────────────
+function setSyncBadge(type, msg) {
   const el = $('sync-badge');
   if(el) {
     el.className = `sync-badge ${type}`;
@@ -525,7 +506,6 @@ function showPage(page) {
   document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
   
   const titles = {
-    upload: 'Carregar Dados',
     dashboard:'Dashboard',
     ordens:'Ordens de Serviço',
     historico:'Histórico por Equipamento',
@@ -533,9 +513,7 @@ function showPage(page) {
     relatorios:'Relatórios'
   };
   setText('page-title', titles[page] || page);
-  if (page !== 'upload' && page !== 'loading') {
-    renderCurrentPage();
-  }
+  renderCurrentPage();
 }
 
 function renderCurrentPage() {
@@ -550,7 +528,8 @@ function renderCurrentPage() {
 }
 
 function reloadData() {
-  triggerFileUpload();
+  setSyncBadge('syncing', 'Recarregando...');
+  loadGoogleSheets();
 }
 
 // ── FUNÇÕES DE BADGE ───────────────────────────────────────────────────
@@ -776,13 +755,7 @@ function renderRelatorios() {
 
 // Navegação sidebar
 document.querySelectorAll('.nav-item[data-page]').forEach(item =>
-  item.addEventListener('click', () => {
-    if (OS.length === 0) {
-      alert('Por favor, carregue um arquivo CSV primeiro!');
-      return;
-    }
-    showPage(item.dataset.page);
-  })
+  item.addEventListener('click', () => showPage(item.dataset.page))
 );
 
 // Links "Ver todos"
@@ -816,9 +789,13 @@ $('hist-search')?.addEventListener('input', renderHistorico);
 
 // ── INICIALIZAÇÃO ──────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  // Mostra página de upload inicial
-  showPage('upload');
+  loadGoogleSheets();
 });
+
+// Recarrega dados a cada 5 minutos
+setInterval(() => {
+  loadGoogleSheets();
+}, 5 * 60 * 1000);
 </script>
 </body>
 </html>
