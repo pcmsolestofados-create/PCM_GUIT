@@ -372,28 +372,28 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
 
 <script>
 // ── CONFIGURAÇÃO DO GOOGLE SHEETS ──────────────────────────────────────
-// URL da planilha publicada (nova)
+// URL da planilha publicada
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?gid=1256614582&single=true&output=csv';
 const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676';
 const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
 
-// ── MAPEAMENTO DE COLUNAS (Conforme sua estrutura) ──────────────────────
+// ── MAPEAMENTO DE COLUNAS (Conforme MAPA.txt) ──────────────────────────
 const COL = {
-  NUM:      0,   // A - Nº OS
-  DATA:     1,   // B - Data
-  HORA:     2,   // C - Hora
-  SOL:      3,   // D - SOLICITANTE
-  SETOR:    4,   // E - Setor
-  EQUIP:    5,   // F - Equipamento
-  FALHA:    6,   // G - Falha apresentada
-  TIPO:     7,   // H - Intervenção Realizada
-  SERVICO:  8,   // I - Serviço Realizado
-  PECA:     9,   // J - Peças reparadas
-  SEG:      10,  // K - Segurança do equipamento
-  SEG_INDIC:11,  // L - Indicação de segurança
-  COLAB:    12,  // M - Nome do colaborador
-  TECNICO:  13,  // N - Técnico
-  STATUS:   14,  // O - Status da Ordens de serviço 
+  NUM_OS:        0,   // A - Nº OS
+  DATA:          1,   // B - Data
+  HORA:          2,   // C - Hora
+  SOLICITANTE:   3,   // D - Solicitante
+  SETOR:         4,   // E - Setor
+  EQUIPAMENTO:   5,   // F - Equipamento
+  FALHA:         6,   // G - Falha apresentada
+  INTERVENCAO:   7,   // H - Intervenção realizada
+  SERVICO:       8,   // I - Serviço realizado
+  PECAS:         9,   // J - Peças reparadas/substituídas
+  SEGURANCA_EQ:  10,  // K - Segurança do equipamento
+  INDICACAO_SEG: 11,  // L - Indicação de segurança
+  COLABORADOR:   12,  // M - Nome do colaborador
+  TECNICO:       13,  // N - Técnico
+  STATUS:        14,  // O - Status da OS
 };
 
 // ── ESTADO GLOBAL ──────────────────────────────────────────────────────
@@ -408,8 +408,8 @@ const setText = (id, v) => { const el = $(id); if(el) el.textContent = v; };
 const groupBy = (arr, fn) => { const m={}; arr.forEach(x=>{ const k=fn(x)||'—'; m[k]=(m[k]||0)+1; }); return m; };
 const sorted  = obj => Object.entries(obj).sort((a,b)=>b[1]-a[1]);
 const count   = (arr, fn) => arr.filter(fn).length;
-const isCor   = x => (x.tipo||'').toLowerCase().includes('corretiva');
-const isPrev  = x => (x.tipo||'').toLowerCase().includes('preventiva');
+const isCorretiva   = x => (x.intervencao||'').toLowerCase().includes('corretiva');
+const isPreventiva  = x => (x.intervencao||'').toLowerCase().includes('preventiva');
 
 // ── ABRIR FORMULÁRIO ───────────────────────────────────────────────────
 function openForm() {
@@ -456,23 +456,23 @@ function parseCSV(text) {
   const dataStart = 1;
 
   return lines.slice(dataStart)
-    .filter(r => r.length > 5 && r[COL.NUM] && r[COL.NUM].trim())
+    .filter(r => r.length > 5 && r[COL.NUM_OS] && r[COL.NUM_OS].trim())
     .map(r => ({
-      n:       r[COL.NUM]?.trim() || '',
-      data:    r[COL.DATA]?.trim() || '',
-      hora:    r[COL.HORA]?.trim() || '',
-      sol:     r[COL.SOL]?.trim() || '',
-      setor:   r[COL.SETOR]?.trim() || '',
-      equip:   r[COL.EQUIP]?.trim() || '',
-      falha:   r[COL.FALHA]?.trim() || '',
-      tipo:    r[COL.TIPO]?.trim() || '',
-      servico: r[COL.SERVICO]?.trim() || '',
-      peca:    r[COL.PECA]?.trim() || '',
-      seg:     r[COL.SEG]?.trim() || '',
-      segindic:r[COL.SEG_INDIC]?.trim() || '',
-      colab:   r[COL.COLAB]?.trim() || '',
-      tecnico: r[COL.TECNICO]?.trim() || '',
-      status:  r[COL.STATUS]?.trim() || 'Aberta',
+      numOS:       r[COL.NUM_OS]?.trim() || '',
+      data:        r[COL.DATA]?.trim() || '',
+      hora:        r[COL.HORA]?.trim() || '',
+      solicitante: r[COL.SOLICITANTE]?.trim() || '',
+      setor:       r[COL.SETOR]?.trim() || '',
+      equipamento: r[COL.EQUIPAMENTO]?.trim() || '',
+      falha:       r[COL.FALHA]?.trim() || '',
+      intervencao: r[COL.INTERVENCAO]?.trim() || '',
+      servico:     r[COL.SERVICO]?.trim() || '',
+      pecas:       r[COL.PECAS]?.trim() || '',
+      seguranca:   r[COL.SEGURANCA_EQ]?.trim() || '',
+      indicacaoSeg:r[COL.INDICACAO_SEG]?.trim() || '',
+      colaborador: r[COL.COLABORADOR]?.trim() || '',
+      tecnico:     r[COL.TECNICO]?.trim() || '',
+      status:      r[COL.STATUS]?.trim() || 'Aberta',
     }));
 }
 
@@ -533,8 +533,8 @@ function reloadData() {
 }
 
 // ── FUNÇÕES DE BADGE ───────────────────────────────────────────────────
-function badgeTipo(x) {
-  return isCor(x)
+function badgeIntervencao(x) {
+  return isCorretiva(x)
     ? '<span class="badge b-cor">Corretiva</span>'
     : '<span class="badge b-prev">Preventiva</span>';
 }
@@ -548,8 +548,8 @@ function badgeStatus(s) {
 function renderDashboard() {
   const total = OS.length;
   const conc  = count(OS, x => x.status === 'Concluída');
-  const cor   = count(OS, isCor);
-  const prev  = count(OS, isPrev);
+  const cor   = count(OS, isCorretiva);
+  const prev  = count(OS, isPreventiva);
   
   setText('kpi-total', total);
   setText('kpi-conc', conc);
@@ -563,22 +563,22 @@ function renderDashboard() {
   renderBar('setor-chart',   sorted(groupBy(OS, x=>x.setor)).slice(0,6),   '#2563EB');
   renderBar('tecnico-chart', sorted(groupBy(OS, x=>x.tecnico)).slice(0,5), '#1D4ED8');
   renderTimeline();
-  renderBar('peca-chart',    sorted(groupBy(OS, x=>x.peca)).slice(0,5),    '#D97706');
+  renderBar('peca-chart',    sorted(groupBy(OS, x=>x.pecas)).slice(0,5),    '#D97706');
   renderStatusChart();
 }
 
 function renderDashTable() {
   let data = OS.slice().reverse();
-  if (dashTab === 'Corretiva')  data = data.filter(isCor);
-  if (dashTab === 'Preventiva') data = data.filter(isPrev);
+  if (dashTab === 'Corretiva')  data = data.filter(isCorretiva);
+  if (dashTab === 'Preventiva') data = data.filter(isPreventiva);
   data = data.slice(0, 10);
   
   $('dash-tbody').innerHTML = data.map(x => `<tr>
-    <td class="os-num">#${x.n}</td>
+    <td class="os-num">#${x.numOS}</td>
     <td style="white-space:nowrap">${x.data}</td>
     <td>${x.setor}</td>
-    <td class="truncate" style="max-width:120px" title="${x.equip}">${x.equip}</td>
-    <td>${badgeTipo(x)}</td>
+    <td class="truncate" style="max-width:120px" title="${x.equipamento}">${x.equipamento}</td>
+    <td>${badgeIntervencao(x)}</td>
     <td>${x.tecnico}</td>
     <td>${badgeStatus(x.status)}</td>
   </tr>`).join('') || '<tr><td colspan="7" class="empty">Sem dados</td></tr>';
@@ -608,7 +608,7 @@ function renderTimeline() {
         ${i<5?'<div class="tl-line"></div>':''}
       </div>
       <div>
-        <div class="tl-title">OS #${x.n} — ${x.equip}</div>
+        <div class="tl-title">OS #${x.numOS} — ${x.equipamento}</div>
         <div class="tl-time">${x.data} ${x.hora} · ${x.tecnico||'—'}</div>
       </div>
     </div>`).join('');
@@ -633,24 +633,24 @@ function renderOS() {
   let data = OS.slice().reverse();
   
   if (osFilter !== 'Todos') {
-    if (osFilter==='Corretiva')  data = data.filter(isCor);
-    else if (osFilter==='Preventiva') data = data.filter(isPrev);
+    if (osFilter==='Corretiva')  data = data.filter(isCorretiva);
+    else if (osFilter==='Preventiva') data = data.filter(isPreventiva);
     else data = data.filter(x => x.status === osFilter);
   }
   
   if (search) {
     data = data.filter(x =>
-      [x.n, x.equip, x.setor, x.tecnico, x.falha, x.servico].some(f=>(f||'').toLowerCase().includes(search))
+      [x.numOS, x.equipamento, x.setor, x.tecnico, x.falha, x.servico].some(f=>(f||'').toLowerCase().includes(search))
     );
   }
 
   $('os-tbody').innerHTML = data.map(x => `<tr>
-    <td class="os-num">#${x.n}</td>
+    <td class="os-num">#${x.numOS}</td>
     <td style="white-space:nowrap">${x.data}</td>
     <td>${x.setor}</td>
-    <td class="truncate" style="max-width:130px" title="${x.equip}">${x.equip}</td>
+    <td class="truncate" style="max-width:130px" title="${x.equipamento}">${x.equipamento}</td>
     <td class="truncate" style="max-width:130px" title="${x.falha}">${x.falha}</td>
-    <td>${badgeTipo(x)}</td>
+    <td>${badgeIntervencao(x)}</td>
     <td class="truncate" style="max-width:180px" title="${x.servico}">${x.servico}</td>
     <td>${x.tecnico||'—'}</td>
     <td>${badgeStatus(x.status)}</td>
@@ -666,8 +666,8 @@ function renderHistorico() {
   const grupos = {};
   
   OS.forEach(x => {
-    if (!grupos[x.equip]) grupos[x.equip] = [];
-    grupos[x.equip].push(x);
+    if (!grupos[x.equipamento]) grupos[x.equipamento] = [];
+    grupos[x.equipamento].push(x);
   });
   
   let keys = Object.keys(grupos).sort();
@@ -688,9 +688,9 @@ function renderHistorico() {
       </div>
       <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
       <tbody>${os.map(x=>`<tr>
-        <td class="os-num">#${x.n}</td>
+        <td class="os-num">#${x.numOS}</td>
         <td style="white-space:nowrap">${x.data}</td>
-        <td>${badgeTipo(x)}</td>
+        <td>${badgeIntervencao(x)}</td>
         <td class="truncate" style="max-width:240px" title="${x.servico}">${x.servico}</td>
         <td>${x.tecnico||'—'}</td>
         <td>${badgeStatus(x.status)}</td>
@@ -707,7 +707,7 @@ function renderTecnicos() {
     const t = (x.tecnico||'—').trim();
     if(!tecs[t]) tecs[t]={total:0,cor:0,prev:0,conc:0,aberto:0};
     tecs[t].total++;
-    if(isCor(x)) tecs[t].cor++; else tecs[t].prev++;
+    if(isCorretiva(x)) tecs[t].cor++; else tecs[t].prev++;
     if(x.status==='Concluída') tecs[t].conc++;
     else tecs[t].aberto++;
   });
@@ -736,9 +736,9 @@ function renderTecnicos() {
 // ── RELATÓRIOS ─────────────────────────────────────────────────────────
 function renderRelatorios() {
   const setores = sorted(groupBy(OS, x=>x.setor));
-  const equips  = sorted(groupBy(OS, x=>x.equip));
-  const pecas   = sorted(groupBy(OS, x=>x.peca));
-  const tipos   = sorted(groupBy(OS, x=>x.tipo));
+  const equips  = sorted(groupBy(OS, x=>x.equipamento));
+  const pecas   = sorted(groupBy(OS, x=>x.pecas));
+  const tipos   = sorted(groupBy(OS, x=>x.intervencao));
   const total   = OS.length;
 
   $('rel-setores').innerHTML = setores.slice(0,10).map(([k,v]) =>
