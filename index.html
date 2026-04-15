@@ -18,98 +18,45 @@
   --radius:10px;--radius-sm:6px;
 }
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;font-size:13px;}
-.app{display:flex;height:100vh;flex-direction:column;}
+.app{display:flex;height:100vh;}
 
 /* SIDEBAR */
-.sidebar{
-  width:100%;
-  background:var(--sidebar);
-  display:flex;
-  flex-direction:row;
-  flex-shrink:0;
-  overflow-x:auto;
-  overflow-y:hidden;
-  padding:0;
-  height:auto;
-  border-bottom:1px solid rgba(255,255,255,0.1);
-}
-.sidebar-items{
-  display:flex;
-  flex-direction:row;
-  gap:0;
-  flex:1;
-}
-
-.logo{padding:12px 16px;border-right:1px solid rgba(255,255,255,0.06);border-bottom:0;display:flex;flex-direction:column;justify-content:center;white-space:nowrap;}
-.logo-name{font-size:13px;font-weight:700;color:#fff;}
-.logo-sub{font-size:9px;color:rgba(255,255,255,0.4);margin-top:1px;}
-
-.nav-sec{display:none;}
-
-.nav-item{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
-  padding:10px 14px;
-  font-size:10px;
-  color:rgba(255,255,255,0.5);
-  cursor:pointer;
-  border-bottom:2px solid transparent;
-  border-left:none;
-  transition:all .15s;
-  white-space:nowrap;
-  flex-shrink:0;
-}
+.sidebar{width:214px;background:var(--sidebar);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.logo{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo-name{font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.01em;}
+.logo-sub{font-size:11px;color:rgba(255,255,255,0.32);margin-top:2px;}
+.nav-sec{font-size:10px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:.1em;padding:16px 16px 5px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 16px;font-size:12.5px;color:rgba(255,255,255,0.5);cursor:pointer;border-left:2px solid transparent;transition:all .15s;}
 .nav-item:hover{color:#fff;background:rgba(255,255,255,0.04);}
-.nav-item.active{color:#fff;background:transparent;border-bottom-color:#2563EB;}
-.nav-item svg{width:18px;height:18px;}
-
-.sync-indicator{display:none;}
-.data-info{display:none;}
-.sheet-link-btn{display:none;}
+.nav-item.active{color:#fff;background:rgba(37,99,235,0.2);border-left-color:#2563EB;}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;}
+.sync-indicator{margin:12px 12px 8px;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.4);border-radius:8px;padding:12px;text-align:center;}
+.sync-indicator .sync-icon{font-size:20px;margin-bottom:4px;animation:spin 2s linear infinite;}
+.sync-indicator p{font-size:11px;color:rgba(255,255,255,0.6);line-height:1.4;}
+.sync-indicator strong{color:#93C5FD;}
+.data-info{margin:0 12px 12px;padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:6px;}
+.data-info p{font-size:10px;color:rgba(255,255,255,0.4);line-height:1.5;}
+.data-info strong{color:rgba(255,255,255,0.7);}
+.sync-status{font-size:9px;color:rgba(255,255,255,0.5);margin-top:4px;}
+.sync-status.synced{color:#93C5FD;}
+.sync-status.error{color:#FCA5A5;}
+.sheet-link-btn{display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 12px 8px;padding:10px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);border-radius:8px;color:rgba(255,255,255,0.8);cursor:pointer;font-size:11px;font-weight:600;transition:all .15s;text-decoration:none;width:calc(100% - 24px);}
+.sheet-link-btn:hover{background:rgba(16,185,129,0.25);color:#fff;}
+.sheet-link-btn svg{width:14px;height:14px;}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
 /* MAIN */
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0;}
-
-.topbar{
-  background:var(--panel);
-  border-bottom:1px solid var(--border);
-  padding:8px 12px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:20;
-  gap:8px;
-}
-.topbar-l{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
-.topbar-title{font-size:13px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.sync-badge{font-size:9px;padding:2px 8px;border-radius:20px;font-weight:600;flex-shrink:0;}
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+.topbar-l{display:flex;align-items:center;gap:10px;}
+.topbar-title{font-size:14px;font-weight:700;color:var(--text);}
+.sync-badge{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:600;}
 .sync-badge.ok{background:var(--green-bg);color:var(--green);}
 .sync-badge.idle{background:#F3F4F6;color:var(--muted);}
 .sync-badge.syncing{background:#FEF3C7;color:var(--amber);}
 .sync-badge.err{background:var(--red-bg);color:var(--red);}
-
-.topbar-r{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.btn{
-  font-size:10px;
-  padding:5px 10px;
-  border-radius:var(--radius-sm);
-  cursor:pointer;
-  font-weight:600;
-  border:none;
-  transition:all .15s;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
-  min-height:30px;
-  min-width:30px;
-}
-.btn svg{width:14px;height:14px;}
+.topbar-r{display:flex;align-items:center;gap:8px;}
+.btn{font-size:12px;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;font-weight:600;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
 .btn-primary{background:var(--accent);color:#fff;}
 .btn-primary:hover{background:var(--accent2);}
 .btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text);}
@@ -118,71 +65,53 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .btn-sheet:hover{background:#059669;}
 .btn-form{background:#6366F1;color:#fff;}
 .btn-form:hover{background:#4F46E5;}
-
-.btn-text{
-  display:none;
-}
-
-@media (min-width:640px) {
-  .btn-text{display:inline;}
-}
-
-.avatar{width:28px;height:28px;border-radius:50%;background:#1D4ED8;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.avatar{width:30px;height:30px;border-radius:50%;background:#1D4ED8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
 
 /* CONTENT */
-.content{padding:12px;flex:1;max-width:100%;}
+.content{padding:20px;flex:1;}
 .page{display:none;}.page.active{display:block;}
 
 /* LOADING PAGE */
-.loading-container{max-width:100%;margin:40px auto 0;text-align:center;padding:0 20px;}
-.loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite;}
-.loading-container h2{font-size:18px;font-weight:700;color:var(--text);margin-bottom:10px;}
-.loading-container p{font-size:12px;color:var(--muted);}
+.loading-container{max-width:560px;margin:100px auto 0;text-align:center;}
+.loading-spinner{width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--accent);border-radius:50%;margin:0 auto 20px;animation:spin 1s linear infinite;}
+.loading-container h2{font-size:22px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.loading-container p{font-size:13px;color:var(--muted);}
 
 /* KPI */
-.kpi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px;}
-.kpi{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px;position:relative;overflow:hidden;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px;}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden;}
 .kpi-bar{position:absolute;top:0;left:0;width:3px;height:100%;}
-.kpi-label{font-size:10px;color:var(--muted);margin-bottom:5px;font-weight:500;}
-.kpi-val{font-size:24px;font-weight:700;line-height:1;color:var(--text);}
-.kpi-sub{font-size:10px;margin-top:4px;color:var(--muted);}
+.kpi-label{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500;}
+.kpi-val{font-size:28px;font-weight:700;line-height:1;color:var(--text);}
+.kpi-sub{font-size:11px;margin-top:5px;color:var(--muted);}
 .kpi-sub.g{color:var(--green);}.kpi-sub.r{color:var(--red);}.kpi-sub.a{color:var(--amber);}
 
-@media (min-width:768px) {
-  .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
-}
-
 /* GRID ROWS */
-.row2{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px;}
-.row3{display:grid;grid-template-columns:1fr;gap:12px;}
-
-@media (min-width:768px) {
-  .row2{grid-template-columns:1fr 300px;}
-  .row3{grid-template-columns:repeat(3,minmax(0,1fr));}
-}
+.row2{display:grid;grid-template-columns:1fr 300px;gap:14px;margin-bottom:14px;}
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
 
 /* PANEL */
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);}
-.ph{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border);gap:8px;}
-.pt{font-size:12px;font-weight:700;flex:1;}
-.pa{font-size:10px;color:var(--accent);cursor:pointer;font-weight:500;white-space:nowrap;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);}
+.pt{font-size:13px;font-weight:700;}
+.pa{font-size:11px;color:var(--accent);cursor:pointer;font-weight:500;}
 .pa:hover{text-decoration:underline;}
 
 /* TABS */
-.tabs{display:flex;padding:0 12px;border-bottom:1px solid var(--border);overflow-x:auto;gap:0;}
-.tab{font-size:10px;padding:7px 10px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:all .15s;white-space:nowrap;}
+.tabs{display:flex;padding:0 14px;border-bottom:1px solid var(--border);}
+.tab{font-size:11px;padding:8px 10px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:all .15s;}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
 
 /* TABLE */
 table{width:100%;border-collapse:collapse;}
-th{font-size:9px;color:var(--muted);text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.03em;font-weight:600;white-space:nowrap;background:#FAFAFA;}
-td{font-size:11px;padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+th{font-size:10px;color:var(--muted);text-align:left;padding:7px 14px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em;font-weight:600;white-space:nowrap;background:#FAFAFA;}
+td{font-size:12px;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:#F9FAFB;}
 .os-num{font-weight:700;color:var(--accent);}
 
 /* BADGE */
-.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;white-space:nowrap;}
 .b-conc{background:var(--green-bg);color:var(--green);}
 .b-and{background:var(--amber-bg);color:var(--amber);}
 .b-ab{background:var(--blue-bg);color:var(--blue-text);}
@@ -191,140 +120,64 @@ tr:hover td{background:#F9FAFB;}
 .b-prev{background:var(--blue-bg);color:var(--blue-text);}
 
 /* FILTERS */
-.filter-bar{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid var(--border);overflow-x:auto;flex-wrap:nowrap;}
-.filter-btn{font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-weight:500;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+.filter-bar{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.filter-btn{font-size:11px;padding:4px 11px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-weight:500;transition:all .15s;}
 .filter-btn:hover{border-color:var(--accent);color:var(--accent);}
 .filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-
-input[type=text]{width:100%;font-size:12px;padding:8px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:#F9FAFB;color:var(--text);outline:none;transition:border-color .15s;}
+input[type=text]{width:100%;font-size:12px;padding:7px 11px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:#F9FAFB;color:var(--text);outline:none;transition:border-color .15s;}
 input[type=text]:focus{border-color:var(--accent);background:#fff;}
 
 /* CHART BARS */
-.chart-wrap{padding:12px;}
-.bar-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
-.bar-label{font-size:10px;color:var(--muted);max-width:80px;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.bar-track{flex:1;height:8px;background:#F3F4F6;border-radius:4px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1);}
-.bar-val{font-size:10px;color:var(--muted);width:20px;text-align:right;font-weight:600;flex-shrink:0;}
+.chart-wrap{padding:14px;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.bar-label{font-size:11px;color:var(--muted);width:110px;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bar-track{flex:1;height:9px;background:#F3F4F6;border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.bar-val{font-size:11px;color:var(--muted);width:24px;text-align:right;font-weight:600;}
 
 /* TIMELINE */
-.tl-item{display:flex;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+.tl-item{display:flex;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);}
 .tl-item:last-child{border-bottom:none;}
-.tl-dot-col{display:flex;flex-direction:column;align-items:center;padding-top:2px;flex-shrink:0;}
+.tl-dot-col{display:flex;flex-direction:column;align-items:center;padding-top:3px;}
 .tl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .tl-line{width:1px;flex:1;background:var(--border);margin-top:4px;}
-.tl-title{font-size:11px;font-weight:500;}
-.tl-time{font-size:9px;color:var(--muted);margin-top:1px;}
+.tl-title{font-size:12px;font-weight:500;}
+.tl-time{font-size:10px;color:var(--muted);margin-top:1px;}
 
 /* STAT PILLS */
-.stat-pill{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);}
+.stat-pill{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border);}
 .stat-pill:last-child{border-bottom:none;}
-.stat-name{font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.stat-count{font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.stat-name{font-size:12px;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.stat-count{font-size:13px;font-weight:700;color:var(--accent);}
 
 /* MISC */
-.empty{text-align:center;padding:24px 16px;color:var(--muted);font-size:11px;}
+.empty{text-align:center;padding:32px;color:var(--muted);font-size:12px;}
 .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.os-count-bar{padding:8px 12px;font-size:10px;color:var(--muted);border-top:1px solid var(--border);}
+.os-count-bar{padding:10px 14px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);}
 
 /* SECTION HEADER */
-.section-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 8px;}
+.section-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:0 0 10px;}
 
 /* HIST GROUP */
-.hist-group-header{padding:8px 12px;display:flex;align-items:center;justify-content:space-between;background:#F9FAFB;border-bottom:1px solid var(--border);}
-.hist-group-name{font-size:11px;font-weight:700;}
-.hist-group-meta{font-size:9px;color:var(--muted);}
+.hist-group-header{padding:9px 14px;display:flex;align-items:center;justify-content:space-between;background:#F9FAFB;border-bottom:1px solid var(--border);}
+.hist-group-name{font-size:12px;font-weight:700;}
+.hist-group-meta{font-size:10px;color:var(--muted);}
 
 /* SCROLLABLE TABLE WRAP */
-.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tbl-wrap{overflow-x:auto;}
 
 /* MODAL */
-.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;}
 .modal.active{display:flex;}
-.modal-content{background:var(--panel);border-radius:12px;padding:20px;max-width:100%;width:100%;}
-.modal-title{font-size:15px;font-weight:700;margin-bottom:12px;}
-.modal-text{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+.modal-content{background:var(--panel);border-radius:12px;padding:24px;max-width:400px;width:90%;}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:12px;}
+.modal-text{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
 .modal-buttons{display:flex;gap:8px;justify-content:flex-end;}
-.btn-modal{padding:8px 12px;border-radius:6px;font-size:11px;font-weight:600;border:none;cursor:pointer;transition:all .15s;}
+.btn-modal{padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all .15s;}
 .btn-modal-cancel{background:#E5E7EB;color:var(--text);}
 .btn-modal-cancel:hover{background:#D1D5DB;}
 .btn-modal-confirm{background:var(--accent);color:#fff;}
 .btn-modal-confirm:hover{background:var(--accent2);}
-
-/* RESPONSIVE DESKTOP */
-@media (min-width:1024px) {
-  .app{flex-direction:row;}
-  .sidebar{
-    width:214px;
-    flex-direction:column;
-    overflow-y:auto;
-    overflow-x:hidden;
-    border-bottom:none;
-    border-right:1px solid rgba(255,255,255,0.1);
-    height:100vh;
-    padding:0;
-  }
-  .sidebar-items{flex-direction:column;}
-  .logo{padding:20px 16px 16px;border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);}
-  .logo-name{font-size:15px;}
-  .logo-sub{font-size:11px;margin-top:2px;}
-  .nav-sec{display:block;}
-  .nav-item{flex-direction:row;padding:9px 16px;font-size:12.5px;border-bottom:none;border-left:2px solid transparent;}
-  .nav-item svg{width:15px;height:15px;}
-  .nav-item.active{border-left-color:#2563EB;border-bottom:none;}
-  
-  .topbar{padding:11px 20px;}
-  .topbar-title{font-size:14px;}
-  .sync-badge{font-size:10px;padding:2px 9px;}
-  .btn{font-size:12px;padding:6px 14px;min-height:auto;min-width:auto;}
-  .btn svg{width:12px;height:12px;}
-  .avatar{width:30px;height:30px;font-size:11px;}
-  
-  .content{padding:20px;}
-  .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
-  .row2{grid-template-columns:1fr 300px;gap:14px;}
-  .row3{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
-  
-  .ph{padding:12px 16px;}
-  .pt{font-size:13px;}
-  .pa{font-size:11px;}
-  
-  .tabs{padding:0 14px;}
-  .tab{font-size:11px;padding:8px 10px;}
-  
-  th{font-size:10px;padding:7px 14px;}
-  td{font-size:12px;padding:9px 14px;}
-  .badge{font-size:10px;padding:2px 8px;}
-  
-  .filter-bar{padding:10px 14px;gap:6px;flex-wrap:wrap;}
-  .filter-btn{font-size:11px;padding:4px 11px;}
-  
-  input[type=text]{font-size:12px;padding:7px 11px;}
-  
-  .chart-wrap{padding:14px;}
-  .bar-label{max-width:110px;text-align:right;}
-  .bar-val{width:24px;}
-  
-  .tl-item{padding:9px 14px;}
-  .tl-title{font-size:12px;}
-  .tl-time{font-size:10px;}
-  
-  .stat-pill{padding:9px 14px;}
-  .stat-name{max-width:170px;font-size:12px;}
-  .stat-count{font-size:13px;}
-  
-  .empty{padding:32px;}
-  .os-count-bar{padding:10px 14px;font-size:11px;}
-  .section-label{font-size:11px;}
-  .hist-group-header{padding:9px 14px;}
-  .hist-group-name{font-size:12px;}
-  .hist-group-meta{font-size:10px;}
-  
-  .modal-content{max-width:400px;}
-  .modal-title{font-size:16px;}
-  .modal-text{font-size:13px;}
-  .btn-modal{padding:8px 14px;font-size:12px;}
-}
 </style>
 </head>
 <body>
@@ -336,28 +189,48 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
       <div class="logo-name">Sol Estofados</div>
       <div class="logo-sub">Sistema de Manutenção</div>
     </div>
-    
-    <div class="sidebar-items">
-      <div class="nav-item active" data-page="dashboard">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
-        <span>Dashboard</span>
-      </div>
-      <div class="nav-item" data-page="ordens">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><line x1="5" y1="7" x2="11" y2="7"/><line x1="5" y1="10" x2="9" y2="10"/></svg>
-        <span>Ordens</span>
-      </div>
-      <div class="nav-item" data-page="historico">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="5.5"/><line x1="8" y1="5" x2="8" y2="8"/><line x1="8" y1="8" x2="10.5" y2="10.5"/></svg>
-        <span>Histórico</span>
-      </div>
-      <div class="nav-item" data-page="tecnicos">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="2.5"/><path d="M3 14c0-3.3 2.2-5 5-5s5 1.7 5 5"/></svg>
-        <span>Técnicos</span>
-      </div>
-      <div class="nav-item" data-page="relatorios">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1.5"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="8" y2="9"/></svg>
-        <span>Relatórios</span>
-      </div>
+
+    <!-- Sincronização com Google Sheets -->
+    <div class="sync-indicator" id="sync-indicator">
+      <div class="sync-icon">📊</div>
+      <p><strong>Conectando...</strong><br>Sincronizando com<br>Google Sheets</p>
+    </div>
+    <div class="data-info" id="data-info" style="display:none">
+      <p id="data-info-text"></p>
+      <div class="sync-status" id="sync-status"></div>
+    </div>
+
+    <!-- Botão para ir para a planilha -->
+    <a class="sheet-link-btn" href="https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676" target="_blank" title="Abrir planilha no Google Sheets">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Abrir planilha
+    </a>
+
+    <div class="nav-sec">Principal</div>
+    <div class="nav-item active" data-page="dashboard">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" data-page="ordens">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><line x1="5" y1="7" x2="11" y2="7"/><line x1="5" y1="10" x2="9" y2="10"/></svg>
+      Ordens de Serviço
+    </div>
+    <div class="nav-item" data-page="historico">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="5.5"/><line x1="8" y1="5" x2="8" y2="8"/><line x1="8" y1="8" x2="10.5" y2="10.5"/></svg>
+      Histórico
+    </div>
+    <div class="nav-sec">Análise</div>
+    <div class="nav-item" data-page="tecnicos">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="2.5"/><path d="M3 14c0-3.3 2.2-5 5-5s5 1.7 5 5"/></svg>
+      Técnicos
+    </div>
+    <div class="nav-item" data-page="relatorios">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1.5"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="8" y2="9"/></svg>
+      Relatórios
     </div>
   </div>
 
@@ -369,15 +242,23 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
         <span class="sync-badge idle" id="sync-badge">Sincronizando...</span>
       </div>
       <div class="topbar-r">
-        <button class="btn btn-form" onclick="openForm()" title="Nova OS">
+        <button class="btn btn-form" onclick="openForm()" title="Abrir formulário para nova OS">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 5v14M5 12h14"/>
           </svg>
-          <span class="btn-text">Nova OS</span>
+          Nova OS
         </button>
-        <button class="btn btn-ghost" onclick="reloadData()" title="Recarregar">
+        <button class="btn btn-sheet" onclick="goToSheet()" title="Abrir planilha no Google Sheets">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Planilha
+        </button>
+        <button class="btn btn-ghost" onclick="reloadData()" title="Recarregar dados">
           <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v5h5M15 12v-5h-5"/><path d="M2.5 7c1-2 3-3 5.5-3 4 0 7 3 7 7s-3 7-7 7-7-3-7-7"/></svg>
-          <span class="btn-text">Recarregar</span>
+          Recarregar
         </button>
         <div class="avatar">LS</div>
       </div>
@@ -390,7 +271,7 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
         <div class="loading-container">
           <div class="loading-spinner"></div>
           <h2>Carregando dados...</h2>
-          <p>Sincronizando com sua planilha Google Sheets.</p>
+          <p>Sincronizando com sua planilha Google Sheets. Isso pode levar alguns segundos.</p>
         </div>
       </div>
 
@@ -404,7 +285,7 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
         </div>
         <div class="row2">
           <div class="panel">
-            <div class="ph"><div class="pt">Últimas OS</div><div class="pa" data-goto="ordens">Ver todas →</div></div>
+            <div class="ph"><div class="pt">Últimas OS registradas</div><div class="pa" data-goto="ordens">Ver todas →</div></div>
             <div class="tabs" id="dash-tabs">
               <div class="tab active" data-filter="Todas">Todas</div>
               <div class="tab" data-filter="Corretiva">Corretivas</div>
@@ -412,14 +293,14 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
             </div>
             <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Setor</th><th>Equipamento</th><th>Tipo</th><th>Técnico</th><th>Status</th></tr></thead><tbody id="dash-tbody"></tbody></table></div>
           </div>
-          <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;flex-direction:column;gap:12px;">
             <div class="panel"><div class="ph"><div class="pt">OS por setor</div></div><div class="chart-wrap" id="setor-chart"></div></div>
             <div class="panel"><div class="ph"><div class="pt">OS por técnico</div></div><div class="chart-wrap" id="tecnico-chart"></div></div>
           </div>
         </div>
         <div class="row3">
           <div class="panel"><div class="ph"><div class="pt">Atividade recente</div></div><div id="timeline"></div></div>
-          <div class="panel"><div class="ph"><div class="pt">Peça/intervenção</div></div><div class="chart-wrap" id="peca-chart"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Tipo de peça/intervenção</div></div><div class="chart-wrap" id="peca-chart"></div></div>
           <div class="panel"><div class="ph"><div class="pt">Status das OS</div></div><div id="status-chart" class="chart-wrap"></div></div>
         </div>
       </div>
@@ -436,11 +317,11 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
             <button class="filter-btn" data-filter="Corretiva">Corretivas</button>
             <button class="filter-btn" data-filter="Preventiva">Preventivas</button>
           </div>
-          <div style="padding:8px 12px;border-bottom:1px solid var(--border);">
-            <input type="text" id="os-search" placeholder="Buscar OS, equipamento...">
+          <div style="padding:8px 14px;border-bottom:1px solid var(--border);">
+            <input type="text" id="os-search" placeholder="Buscar por OS, equipamento, setor, técnico, falha...">
           </div>
           <div class="tbl-wrap">
-            <table><thead><tr><th>Nº OS</th><th>Data</th><th>Setor</th><th>Equipamento</th><th>Falha</th><th>Tipo</th><th>Serviço</th><th>Técnico</th><th>Status</th></tr></thead>
+            <table><thead><tr><th>Nº OS</th><th>Data</th><th>Setor</th><th>Equipamento</th><th>Falha</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
             <tbody id="os-tbody"></tbody></table>
           </div>
           <div class="os-count-bar" id="os-count"></div>
@@ -451,7 +332,7 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
       <div class="page" id="page-historico">
         <div class="panel">
           <div class="ph"><div class="pt">Histórico por equipamento</div></div>
-          <div style="padding:8px 12px;border-bottom:1px solid var(--border);">
+          <div style="padding:8px 14px;border-bottom:1px solid var(--border);">
             <input type="text" id="hist-search" placeholder="Buscar equipamento...">
           </div>
           <div id="hist-content"></div>
@@ -464,24 +345,24 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
         <div class="row2">
           <div class="panel">
             <div class="ph"><div class="pt">Desempenho por técnico</div></div>
-            <div class="tbl-wrap"><table><thead><tr><th>Técnico</th><th>Total</th><th>Cor</th><th>Prev</th><th>Conc</th><th>Aberto</th></tr></thead>
-            <tbody id="tec-tbody"></tbody></table></div>
+            <table><thead><tr><th>Técnico</th><th>Total</th><th>Corretivas</th><th>Preventivas</th><th>Concluídas</th><th>Em aberto</th></tr></thead>
+            <tbody id="tec-tbody"></tbody></table>
           </div>
-          <div class="panel"><div class="ph"><div class="pt">Distribuição</div></div><div class="chart-wrap" id="tec-chart"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Distribuição de OS</div></div><div class="chart-wrap" id="tec-chart"></div></div>
         </div>
       </div>
 
       <!-- RELATÓRIOS -->
       <div class="page" id="page-relatorios">
         <div class="row3">
-          <div class="panel"><div class="ph"><div class="pt">Setores</div></div><div id="rel-setores"></div></div>
-          <div class="panel"><div class="ph"><div class="pt">Equipamentos</div></div><div id="rel-equip"></div></div>
-          <div class="panel"><div class="ph"><div class="pt">Peças</div></div><div id="rel-pecas"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Setores com mais OS</div></div><div id="rel-setores"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Equipamentos mais acionados</div></div><div id="rel-equip"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Peças / intervenções</div></div><div id="rel-pecas"></div></div>
         </div>
-        <div class="panel" style="margin-top:12px;">
-          <div class="ph"><div class="pt">Intervenções</div></div>
-          <div class="tbl-wrap"><table><thead><tr><th>Tipo</th><th>Qtd</th><th>%</th></tr></thead>
-          <tbody id="rel-tbody"></tbody></table></div>
+        <div class="panel" style="margin-top:14px;">
+          <div class="ph"><div class="pt">Resumo geral das intervenções</div></div>
+          <table><thead><tr><th>Tipo de intervenção</th><th>Quantidade</th><th>Percentual</th></tr></thead>
+          <tbody id="rel-tbody"></tbody></table>
         </div>
       </div>
 
@@ -491,27 +372,28 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
 
 <script>
 // ── CONFIGURAÇÃO DO GOOGLE SHEETS ──────────────────────────────────────
+// URL da planilha publicada (nova)
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?gid=1256614582&single=true&output=csv';
 const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676';
 const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
 
-// ── MAPEAMENTO DE COLUNAS ──────────────────────
+// ── MAPEAMENTO DE COLUNAS (Conforme sua estrutura) ──────────────────────
 const COL = {
-  NUM:      0,
-  DATA:     1,
-  HORA:     2,
-  SOL:      3,
-  SETOR:    4,
-  EQUIP:    5,
-  FALHA:    6,
-  TIPO:     7,
-  SERVICO:  8,
-  PECA:     9,
-  SEG:      10,
-  SEG_INDIC:11,
-  COLAB:    12,
-  TECNICO:  13,
-  STATUS:   14,
+  NUM:      0,   // A - Nº OS
+  DATA:     1,   // B - Data
+  HORA:     2,   // C - Hora
+  SOL:      3,   // D - SOLICITANTE
+  SETOR:    4,   // E - Setor
+  EQUIP:    5,   // F - Equipamento
+  FALHA:    6,   // G - Falha apresentada
+  TIPO:     7,   // H - Intervenção Realizada
+  SERVICO:  8,   // I - Serviço Realizado
+  PECA:     9,   // J - Peças reparadas
+  SEG:      10,  // K - Segurança do equipamento
+  SEG_INDIC:11,  // L - Indicação de segurança
+  COLAB:    12,  // M - Nome do colaborador
+  TECNICO:  13,  // N - Técnico
+  STATUS:   14,  // O - Status da Ordens de serviço 
 };
 
 // ── ESTADO GLOBAL ──────────────────────────────────────────────────────
@@ -534,6 +416,11 @@ function openForm() {
   window.open(FORM_URL, '_blank');
 }
 
+// ── IR PARA PLANILHA ────────────────────────────────────────────────────
+function goToSheet() {
+  window.open(SHEET_EDIT_URL, '_blank');
+}
+
 // ── CARREGAR DADOS DO GOOGLE SHEETS ────────────────────────────────────
 async function loadGoogleSheets() {
   try {
@@ -546,13 +433,14 @@ async function loadGoogleSheets() {
     
     if (!OS.length) throw new Error('Nenhuma OS encontrada na planilha');
     
-    setSyncBadge('ok', `${OS.length} OS`);
+    setSyncBadge('ok', `${OS.length} OS carregadas`);
+    updateStorageInfo();
     showPage('dashboard');
     renderCurrentPage();
     
   } catch (error) {
     console.error('❌ Erro ao carregar Google Sheets:', error);
-    setSyncBadge('err', 'Erro ao carregar');
+    setSyncBadge('err', 'Erro ao carregar dados');
     alert('Erro ao conectar com Google Sheets: ' + error.message);
   }
 }
@@ -564,6 +452,7 @@ function parseCSV(text) {
     l.split(sep).map(c => c.trim().replace(/^"|"$/g,''))
   );
 
+  // Pular cabeçalho
   const dataStart = 1;
 
   return lines.slice(dataStart)
@@ -587,6 +476,18 @@ function parseCSV(text) {
     }));
 }
 
+// ── ATUALIZAR INFORMAÇÕES DE ARMAZENAMENTO ─────────────────────────────
+function updateStorageInfo() {
+  if (OS.length > 0) {
+    const timestamp = new Date().toLocaleString('pt-BR');
+    const infoText = `<strong>${OS.length} OS</strong> carregadas<br>Atualizado em: ${timestamp}`;
+    $('data-info').style.display = 'block';
+    $('data-info-text').innerHTML = infoText;
+    $('sync-indicator').style.display = 'none';
+  }
+}
+
+// ── ATUALIZAR BADGE DE SINCRONIZAÇÃO ───────────────────────────────────
 function setSyncBadge(type, msg) {
   const el = $('sync-badge');
   if(el) {
@@ -607,7 +508,7 @@ function showPage(page) {
   const titles = {
     dashboard:'Dashboard',
     ordens:'Ordens de Serviço',
-    historico:'Histórico',
+    historico:'Histórico por Equipamento',
     tecnicos:'Técnicos',
     relatorios:'Relatórios'
   };
@@ -634,8 +535,8 @@ function reloadData() {
 // ── FUNÇÕES DE BADGE ───────────────────────────────────────────────────
 function badgeTipo(x) {
   return isCor(x)
-    ? '<span class="badge b-cor">Cor</span>'
-    : '<span class="badge b-prev">Prev</span>';
+    ? '<span class="badge b-cor">Corretiva</span>'
+    : '<span class="badge b-prev">Preventiva</span>';
 }
 
 function badgeStatus(s) {
@@ -652,17 +553,17 @@ function renderDashboard() {
   
   setText('kpi-total', total);
   setText('kpi-conc', conc);
-  setText('kpi-conc-pct', `${total ? Math.round(conc/total*100) : 0}%`);
+  setText('kpi-conc-pct', `${total ? Math.round(conc/total*100) : 0}% do total`);
   setText('kpi-cor', cor);
-  setText('kpi-cor-pct', `${total ? Math.round(cor/total*100) : 0}%`);
+  setText('kpi-cor-pct', `${total ? Math.round(cor/total*100) : 0}% do total`);
   setText('kpi-prev', prev);
-  setText('kpi-prev-pct', `${total ? Math.round(prev/total*100) : 0}%`);
+  setText('kpi-prev-pct', `${total ? Math.round(prev/total*100) : 0}% do total`);
   
   renderDashTable();
-  renderBar('setor-chart',   sorted(groupBy(OS, x=>x.setor)).slice(0,5),   '#2563EB');
-  renderBar('tecnico-chart', sorted(groupBy(OS, x=>x.tecnico)).slice(0,4), '#1D4ED8');
+  renderBar('setor-chart',   sorted(groupBy(OS, x=>x.setor)).slice(0,6),   '#2563EB');
+  renderBar('tecnico-chart', sorted(groupBy(OS, x=>x.tecnico)).slice(0,5), '#1D4ED8');
   renderTimeline();
-  renderBar('peca-chart',    sorted(groupBy(OS, x=>x.peca)).slice(0,4),    '#D97706');
+  renderBar('peca-chart',    sorted(groupBy(OS, x=>x.peca)).slice(0,5),    '#D97706');
   renderStatusChart();
 }
 
@@ -674,9 +575,9 @@ function renderDashTable() {
   
   $('dash-tbody').innerHTML = data.map(x => `<tr>
     <td class="os-num">#${x.n}</td>
-    <td style="white-space:nowrap;font-size:10px">${x.data}</td>
+    <td style="white-space:nowrap">${x.data}</td>
     <td>${x.setor}</td>
-    <td class="truncate" style="max-width:100px;font-size:10px" title="${x.equip}">${x.equip}</td>
+    <td class="truncate" style="max-width:120px" title="${x.equip}">${x.equip}</td>
     <td>${badgeTipo(x)}</td>
     <td>${x.tecnico}</td>
     <td>${badgeStatus(x.status)}</td>
@@ -698,17 +599,17 @@ function renderBar(id, data, color) {
 
 function renderTimeline() {
   const colors = {'Concluída':'#16A34A','Em andamento':'#D97706','Aberta':'#2563EB'};
-  const recent = OS.slice().reverse().slice(0,5);
+  const recent = OS.slice().reverse().slice(0,6);
   
   $('timeline').innerHTML = recent.map((x,i) => `
     <div class="tl-item">
       <div class="tl-dot-col">
         <div class="tl-dot" style="background:${colors[x.status]||'#2563EB'}"></div>
-        ${i<4?'<div class="tl-line"></div>':''}
+        ${i<5?'<div class="tl-line"></div>':''}
       </div>
       <div>
-        <div class="tl-title">OS #${x.n}</div>
-        <div class="tl-time">${x.data} · ${x.tecnico||'—'}</div>
+        <div class="tl-title">OS #${x.n} — ${x.equip}</div>
+        <div class="tl-time">${x.data} ${x.hora} · ${x.tecnico||'—'}</div>
       </div>
     </div>`).join('');
 }
@@ -745,18 +646,18 @@ function renderOS() {
 
   $('os-tbody').innerHTML = data.map(x => `<tr>
     <td class="os-num">#${x.n}</td>
-    <td style="white-space:nowrap;font-size:10px">${x.data}</td>
+    <td style="white-space:nowrap">${x.data}</td>
     <td>${x.setor}</td>
-    <td class="truncate" style="max-width:80px;font-size:10px" title="${x.equip}">${x.equip}</td>
-    <td class="truncate" style="max-width:80px;font-size:10px" title="${x.falha}">${x.falha}</td>
+    <td class="truncate" style="max-width:130px" title="${x.equip}">${x.equip}</td>
+    <td class="truncate" style="max-width:130px" title="${x.falha}">${x.falha}</td>
     <td>${badgeTipo(x)}</td>
-    <td class="truncate" style="max-width:100px;font-size:10px" title="${x.servico}">${x.servico}</td>
+    <td class="truncate" style="max-width:180px" title="${x.servico}">${x.servico}</td>
     <td>${x.tecnico||'—'}</td>
     <td>${badgeStatus(x.status)}</td>
   </tr>`).join('') || '<tr><td colspan="9" class="empty">Nenhuma OS encontrada</td></tr>';
 
-  setText('os-count', `${data.length} de ${OS.length}`);
-  setText('os-total-badge', `${OS.length}`);
+  setText('os-count', `Mostrando ${data.length} de ${OS.length} ordens de serviço`);
+  setText('os-total-badge', `${OS.length} OS`);
 }
 
 // ── HISTÓRICO ──────────────────────────────────────────────────────────
@@ -783,14 +684,14 @@ function renderHistorico() {
     return `<div style="border-bottom:1px solid var(--border)">
       <div class="hist-group-header">
         <span class="hist-group-name">${k}</span>
-        <span class="hist-group-meta">${os.length}</span>
+        <span class="hist-group-meta">${os.length} OS · ${os[0].setor}</span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Tipo</th><th>Serviço</th><th>Técnico</th><th>Status</th></tr></thead>
+      <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
       <tbody>${os.map(x=>`<tr>
         <td class="os-num">#${x.n}</td>
-        <td style="white-space:nowrap;font-size:10px">${x.data}</td>
+        <td style="white-space:nowrap">${x.data}</td>
         <td>${badgeTipo(x)}</td>
-        <td class="truncate" style="max-width:120px;font-size:10px" title="${x.servico}">${x.servico}</td>
+        <td class="truncate" style="max-width:240px" title="${x.servico}">${x.servico}</td>
         <td>${x.tecnico||'—'}</td>
         <td>${badgeStatus(x.status)}</td>
       </tr>`).join('')}</tbody></table></div>
@@ -817,19 +718,19 @@ function renderTecnicos() {
     <div class="kpi"><div class="kpi-bar" style="background:#2563EB"></div>
     <div class="kpi-label">${tec}</div>
     <div class="kpi-val">${val}</div>
-    <div class="kpi-sub">OS</div></div>`).join('');
+    <div class="kpi-sub">OS realizadas</div></div>`).join('');
 
   $('tec-tbody').innerHTML = entries.map(([tec]) => {
     const t = tecs[tec];
     return `<tr>
-      <td style="font-weight:700;font-size:10px">${tec}</td>
+      <td style="font-weight:700">${tec}</td>
       <td>${t.total}</td><td>${t.cor}</td><td>${t.prev}</td>
       <td><span class="badge b-conc">${t.conc}</span></td>
       <td>${t.aberto>0?`<span class="badge b-ab">${t.aberto}</span>`:'—'}</td>
     </tr>`;
   }).join('');
   
-  renderBar('tec-chart', entries.slice(0,5), '#1D4ED8');
+  renderBar('tec-chart', entries, '#1D4ED8');
 }
 
 // ── RELATÓRIOS ─────────────────────────────────────────────────────────
@@ -840,11 +741,11 @@ function renderRelatorios() {
   const tipos   = sorted(groupBy(OS, x=>x.tipo));
   const total   = OS.length;
 
-  $('rel-setores').innerHTML = setores.slice(0,8).map(([k,v]) =>
+  $('rel-setores').innerHTML = setores.slice(0,10).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
-  $('rel-equip').innerHTML = equips.slice(0,8).map(([k,v]) =>
+  $('rel-equip').innerHTML = equips.slice(0,10).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
-  $('rel-pecas').innerHTML = pecas.slice(0,6).map(([k,v]) =>
+  $('rel-pecas').innerHTML = pecas.slice(0,8).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
   $('rel-tbody').innerHTML = tipos.map(([k,v]) =>
     `<tr><td>${k}</td><td>${v}</td><td>${Math.round(v/total*100)}%</td></tr>`).join('');
@@ -852,14 +753,17 @@ function renderRelatorios() {
 
 // ── EVENTOS ────────────────────────────────────────────────────────────
 
+// Navegação sidebar
 document.querySelectorAll('.nav-item[data-page]').forEach(item =>
   item.addEventListener('click', () => showPage(item.dataset.page))
 );
 
+// Links "Ver todos"
 document.querySelectorAll('[data-goto]').forEach(el =>
   el.addEventListener('click', () => showPage(el.dataset.goto))
 );
 
+// Dashboard tabs
 document.querySelectorAll('#dash-tabs .tab').forEach(tab =>
   tab.addEventListener('click', () => {
     document.querySelectorAll('#dash-tabs .tab').forEach(t=>t.classList.remove('active'));
@@ -869,6 +773,7 @@ document.querySelectorAll('#dash-tabs .tab').forEach(tab =>
   })
 );
 
+// OS filters
 document.querySelectorAll('#os-filters .filter-btn').forEach(btn =>
   btn.addEventListener('click', () => {
     document.querySelectorAll('#os-filters .filter-btn').forEach(b=>b.classList.remove('active'));
@@ -878,6 +783,7 @@ document.querySelectorAll('#os-filters .filter-btn').forEach(btn =>
   })
 );
 
+// Search inputs
 $('os-search')?.addEventListener('input', renderOS);
 $('hist-search')?.addEventListener('input', renderHistorico);
 
@@ -886,6 +792,7 @@ window.addEventListener('DOMContentLoaded', () => {
   loadGoogleSheets();
 });
 
+// Recarrega dados a cada 5 minutos
 setInterval(() => {
   loadGoogleSheets();
 }, 5 * 60 * 1000);
