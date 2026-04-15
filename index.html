@@ -63,6 +63,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .btn-ghost:hover{background:#F9FAFB;}
 .btn-sheet{background:#10B981;color:#fff;}
 .btn-sheet:hover{background:#059669;}
+.btn-form{background:#6366F1;color:#fff;}
+.btn-form:hover{background:#4F46E5;}
 .avatar{width:30px;height:30px;border-radius:50%;background:#1D4ED8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
 
 /* CONTENT */
@@ -240,6 +242,12 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
         <span class="sync-badge idle" id="sync-badge">Sincronizando...</span>
       </div>
       <div class="topbar-r">
+        <button class="btn btn-form" onclick="openForm()" title="Abrir formulário para nova OS">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          Nova OS
+        </button>
         <button class="btn btn-sheet" onclick="goToSheet()" title="Abrir planilha no Google Sheets">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -367,6 +375,7 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
 // URL da planilha publicada (nova)
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?gid=1256614582&single=true&output=csv';
 const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676';
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
 
 // ── MAPEAMENTO DE COLUNAS (Conforme sua estrutura) ──────────────────────
 const COL = {
@@ -401,6 +410,11 @@ const sorted  = obj => Object.entries(obj).sort((a,b)=>b[1]-a[1]);
 const count   = (arr, fn) => arr.filter(fn).length;
 const isCor   = x => (x.tipo||'').toLowerCase().includes('corretiva');
 const isPrev  = x => (x.tipo||'').toLowerCase().includes('preventiva');
+
+// ── ABRIR FORMULÁRIO ───────────────────────────────────────────────────
+function openForm() {
+  window.open(FORM_URL, '_blank');
+}
 
 // ── IR PARA PLANILHA ────────────────────────────────────────────────────
 function goToSheet() {
