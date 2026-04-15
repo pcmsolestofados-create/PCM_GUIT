@@ -371,73 +371,239 @@ input[type=text]:focus{border-color:var(--accent);background:#fff;}
 </div><!-- /app -->
 
 <script>
-// ── CONFIGURAÇÃO DO GOOGLE SHEETS ──────────────────────────────────────
-// URL da planilha publicada (nova)
+// ══════════════════════════════════════════════════════════════════════════
+// CONFIGURAÇÃO DO GOOGLE SHEETS
+// ══════════════════════════════════════════════════════════════════════════
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?gid=1256614582&single=true&output=csv';
 const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676';
 const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
 
-// ── MAPEAMENTO DE COLUNAS (Conforme sua estrutura) ──────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// MAPEAMENTO DE COLUNAS
+// ══════════════════════════════════════════════════════════════════════════
 const COL = {
-  NUM:      0,   // A - Nº OS
-  DATA:     1,   // B - Data
-  HORA:     2,   // C - Hora
-  SOL:      3,   // D - SOLICITANTE
-  SETOR:    4,   // E - Setor
-  EQUIP:    5,   // F - Equipamento
-  FALHA:    6,   // G - Falha apresentada
-  TIPO:     7,   // H - Intervenção Realizada
-  SERVICO:  8,   // I - Serviço Realizado
-  PECA:     9,   // J - Peças reparadas
-  SEG:      10,  // K - Segurança do equipamento
-  SEG_INDIC:11,  // L - Indicação de segurança
-  COLAB:    12,  // M - Nome do colaborador
-  TECNICO:  13,  // N - Técnico
-  STATUS:   14,  // O - Status da Ordens de serviço 
+  NUM:       0,   // A - Nº OS
+  DATA:      1,   // B - Data
+  HORA:      2,   // C - Hora
+  SOL:       3,   // D - SOLICITANTE
+  SETOR:     4,   // E - Setor
+  EQUIP:     5,   // F - Equipamento
+  FALHA:     6,   // G - Falha apresentada
+  TIPO:      7,   // H - Intervenção Realizada
+  SERVICO:   8,   // I - Serviço Realizado
+  PECA:      9,   // J - Peças reparadas
+  SEG:       10,  // K - Segurança do equipamento
+  SEG_INDIC: 11,  // L - Indicação de segurança
+  COLAB:     12,  // M - Nome do colaborador
+  TECNICO:   13,  // N - Técnico
+  STATUS:    14,  // O - Status da Ordens de serviço
 };
 
-// ── ESTADO GLOBAL ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ══════════════════════════════════════════════════════════════════════════
 let OS = [];
 let osFilter = 'Todos';
-let dashTab  = 'Todas';
+let dashTab = 'Todas';
 let currentPage = 'dashboard';
 
-// ── HELPERS ────────────────────────────────────────────────────────────
-const $ = id => document.getElementById(id);
-const setText = (id, v) => { const el = $(id); if(el) el.textContent = v; };
-const groupBy = (arr, fn) => { const m={}; arr.forEach(x=>{ const k=fn(x)||'—'; m[k]=(m[k]||0)+1; }); return m; };
-const sorted  = obj => Object.entries(obj).sort((a,b)=>b[1]-a[1]);
-const count   = (arr, fn) => arr.filter(fn).length;
-const isCor   = x => (x.tipo||'').toLowerCase().includes('corretiva');
-const isPrev  = x => (x.tipo||'').toLowerCase().includes('preventiva');
+// ══════════════════════════════════════════════════════════════════════════
+// HELPERS E FUNÇÕES AUXILIARES
+// ══════════════════════════════════════════════════════════════════════════
 
-// ── ABRIR FORMULÁRIO ───────────────────────────────────────────────────
+/** Seleciona elemento por ID */
+const $ = (id) => document.getElementById(id);
+
+/** Define texto de elemento */
+const setText = (id, val) => {
+  const el = $(id);
+  if (el) {
+    el.textContent = val;
+  }
+};
+
+/** Agrupa array por função e retorna contagem */
+const groupBy = (arr, fn) => {
+  const map = {};
+  arr.forEach((item) => {
+    const key = fn(item) || '—';
+    map[key] = (map[key] || 0) + 1;
+  });
+  return map;
+};
+
+/** Ordena objeto por valores decrescentes */
+const sorted = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1]);
+
+/** Conta elementos do array que passam no teste */
+const count = (arr, fn) => arr.filter(fn).length;
+
+/** Verifica se é corretiva */
+const isCor = (x) => {
+  return (x.tipo || '').toLowerCase().includes('corretiva');
+};
+
+/** Verifica se é preventiva */
+const isPrev = (x) => {
+  return (x.tipo || '').toLowerCase().includes('preventiva');
+};
+
+/** Calcula percentual seguro */
+const percent = (val, total) => {
+  return total === 0 ? 0 : Math.round((val / total) * 100);
+};
+
+/** Formata data para padrão brasileiro */
+const formatDate = (dateStr) => {
+  if (!dateStr) return '—';
+  const [y, m, d] = dateStr.split('-');
+  return d && m && y ? `${d}/${m}/${y}` : dateStr;
+};
+
+/** Valida se valor é positivo */
+const isPositive = (val) => {
+  return !isNaN(val) && val > 0;
+};
+
+/** Retorna valor ou padrão */
+const defaultTo = (val, def) => {
+  return (val === undefined || val === null || val === '') ? def : val;
+};
+
+/** Trunca texto com reticências */
+const truncate = (str, len) => {
+  return str && str.length > len ? str.substring(0, len) + '...' : str;
+};
+
+/** Verifica se array está vazio */
+const isEmpty = (arr) => {
+  return !arr || arr.length === 0;
+};
+
+/** Clona objeto */
+const clone = (obj) => {
+  return JSON.parse(JSON.stringify(obj));
+};
+
+/** Ordena array por campo */
+const orderBy = (arr, field, desc = false) => {
+  const copy = clone(arr);
+  return copy.sort((a, b) => {
+    const aVal = a[field] || '';
+    const bVal = b[field] || '';
+    if (desc) {
+      return bVal > aVal ? 1 : -1;
+    }
+    return aVal > bVal ? 1 : -1;
+  });
+};
+
+/** Filtra array com múltiplas condições */
+const filterBy = (arr, conditions) => {
+  return arr.filter((item) => {
+    return Object.keys(conditions).every((key) => {
+      const condVal = conditions[key];
+      const itemVal = item[key] || '';
+      if (typeof condVal === 'function') {
+        return condVal(itemVal);
+      }
+      return itemVal === condVal;
+    });
+  });
+};
+
+/** Remove duplicatas */
+const unique = (arr, fn) => {
+  const seen = new Set();
+  return arr.filter((item) => {
+    const key = fn ? fn(item) : item;
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+};
+
+/** Soma valores */
+const sum = (arr, fn) => {
+  return arr.reduce((acc, item) => {
+    return acc + (fn ? fn(item) : item);
+  }, 0);
+};
+
+/** Encontra máximo */
+const max = (arr, fn) => {
+  return Math.max(...arr.map((item) => fn ? fn(item) : item));
+};
+
+/** Encontra mínimo */
+const min = (arr, fn) => {
+  return Math.min(...arr.map((item) => fn ? fn(item) : item));
+};
+
+/** Média */
+const avg = (arr, fn) => {
+  if (isEmpty(arr)) return 0;
+  return sum(arr, fn) / arr.length;
+};
+
+/** Agrupa por múltiplos campos */
+const groupByMulti = (arr, ...fields) => {
+  const map = {};
+  arr.forEach((item) => {
+    const key = fields.map((f) => item[f] || '—').join(' | ');
+    if (!map[key]) {
+      map[key] = [];
+    }
+    map[key].push(item);
+  });
+  return map;
+};
+
+// ══════════════════════════════════════════════════════════════════════════
+// FUNÇÕES DE AÇÃO
+// ══════════════════════════════════════════════════════════════════════════
+
+/** Abre formulário de nova OS */
 function openForm() {
   window.open(FORM_URL, '_blank');
 }
 
-// ── IR PARA PLANILHA ────────────────────────────────────────────────────
+/** Vai para planilha */
 function goToSheet() {
   window.open(SHEET_EDIT_URL, '_blank');
 }
 
-// ── CARREGAR DADOS DO GOOGLE SHEETS ────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// CARREGAMENTO E PARSING DE DADOS
+// ══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Carrega dados do Google Sheets
+ */
 async function loadGoogleSheets() {
   try {
     setSyncBadge('syncing', 'Sincronizando...');
-    
+
     const response = await fetch(SHEET_URL);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
     const csvText = await response.text();
-    
     OS = parseCSV(csvText);
-    
-    if (!OS.length) throw new Error('Nenhuma OS encontrada na planilha');
-    
+
+    if (!OS || OS.length === 0) {
+      throw new Error('Nenhuma OS encontrada na planilha');
+    }
+
     setSyncBadge('ok', `${OS.length} OS carregadas`);
     updateStorageInfo();
     showPage('dashboard');
     renderCurrentPage();
-    
+
   } catch (error) {
     console.error('❌ Erro ao carregar Google Sheets:', error);
     setSyncBadge('err', 'Erro ao carregar dados');
@@ -445,349 +611,681 @@ async function loadGoogleSheets() {
   }
 }
 
-// ── PARSER CSV ─────────────────────────────────────────────────────────
+/**
+ * Parser CSV com suporte a ponto-e-vírgula ou vírgula
+ */
 function parseCSV(text) {
+  // Detecta separador
   const sep = text.split('\n')[0]?.includes(';') ? ';' : ',';
-  const lines = text.split('\n').map(l => 
-    l.split(sep).map(c => c.trim().replace(/^"|"$/g,''))
+  
+  // Divide em linhas
+  const lines = text.split('\n').map((line) =>
+    line.split(sep).map((cell) => cell.trim().replace(/^"|"$/g, ''))
   );
 
-  // Pular cabeçalho
+  // Ignora cabeçalho (primeira linha)
   const dataStart = 1;
 
-  return lines.slice(dataStart)
-    .filter(r => r.length > 5 && r[COL.NUM] && r[COL.NUM].trim())
-    .map(r => ({
-      n:       r[COL.NUM]?.trim() || '',
-      data:    r[COL.DATA]?.trim() || '',
-      hora:    r[COL.HORA]?.trim() || '',
-      sol:     r[COL.SOL]?.trim() || '',
-      setor:   r[COL.SETOR]?.trim() || '',
-      equip:   r[COL.EQUIP]?.trim() || '',
-      falha:   r[COL.FALHA]?.trim() || '',
-      tipo:    r[COL.TIPO]?.trim() || '',
-      servico: r[COL.SERVICO]?.trim() || '',
-      peca:    r[COL.PECA]?.trim() || '',
-      seg:     r[COL.SEG]?.trim() || '',
-      segindic:r[COL.SEG_INDIC]?.trim() || '',
-      colab:   r[COL.COLAB]?.trim() || '',
-      tecnico: r[COL.TECNICO]?.trim() || '',
-      status:  r[COL.STATUS]?.trim() || 'Aberta',
+  return lines
+    .slice(dataStart)
+    .filter((row) => row.length > 5 && row[COL.NUM] && row[COL.NUM].trim())
+    .map((row) => ({
+      n:        row[COL.NUM]?.trim() || '',
+      data:     row[COL.DATA]?.trim() || '',
+      hora:     row[COL.HORA]?.trim() || '',
+      sol:      row[COL.SOL]?.trim() || '',
+      setor:    row[COL.SETOR]?.trim() || '',
+      equip:    row[COL.EQUIP]?.trim() || '',
+      falha:    row[COL.FALHA]?.trim() || '',
+      tipo:     row[COL.TIPO]?.trim() || '',
+      servico:  row[COL.SERVICO]?.trim() || '',
+      peca:     row[COL.PECA]?.trim() || '',
+      seg:      row[COL.SEG]?.trim() || '',
+      segindic: row[COL.SEG_INDIC]?.trim() || '',
+      colab:    row[COL.COLAB]?.trim() || '',
+      tecnico:  row[COL.TECNICO]?.trim() || '',
+      status:   row[COL.STATUS]?.trim() || 'Aberta',
     }));
 }
 
-// ── ATUALIZAR INFORMAÇÕES DE ARMAZENAMENTO ─────────────────────────────
+/**
+ * Atualiza informações de armazenamento
+ */
 function updateStorageInfo() {
-  if (OS.length > 0) {
+  if (!isEmpty(OS)) {
     const timestamp = new Date().toLocaleString('pt-BR');
     const infoText = `<strong>${OS.length} OS</strong> carregadas<br>Atualizado em: ${timestamp}`;
-    $('data-info').style.display = 'block';
-    $('data-info-text').innerHTML = infoText;
-    $('sync-indicator').style.display = 'none';
+    
+    const infoEl = $('data-info');
+    const textEl = $('data-info-text');
+    const syncEl = $('sync-indicator');
+    
+    if (infoEl) infoEl.style.display = 'block';
+    if (textEl) textEl.innerHTML = infoText;
+    if (syncEl) syncEl.style.display = 'none';
   }
 }
 
-// ── ATUALIZAR BADGE DE SINCRONIZAÇÃO ───────────────────────────────────
+/**
+ * Atualiza badge de sincronização
+ */
 function setSyncBadge(type, msg) {
   const el = $('sync-badge');
-  if(el) {
+  if (el) {
     el.className = `sync-badge ${type}`;
     el.textContent = msg;
   }
 }
 
-// ── FUNÇÕES DE NAVEGAÇÃO ───────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// NAVEGAÇÃO
+// ══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Exibe página
+ */
 function showPage(page) {
   currentPage = page;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item[data-page]').forEach(n => n.classList.remove('active'));
-  
-  $(`page-${page}`)?.classList.add('active');
-  document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
-  
+
+  // Remove active de todas as páginas
+  document.querySelectorAll('.page').forEach((p) => {
+    p.classList.remove('active');
+  });
+
+  // Remove active de todos nav-items
+  document.querySelectorAll('.nav-item[data-page]').forEach((n) => {
+    n.classList.remove('active');
+  });
+
+  // Adiciona active à página
+  const pageEl = $(`page-${page}`);
+  if (pageEl) {
+    pageEl.classList.add('active');
+  }
+
+  // Adiciona active ao nav-item
+  const navEl = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (navEl) {
+    navEl.classList.add('active');
+  }
+
+  // Atualiza título
   const titles = {
-    dashboard:'Dashboard',
-    ordens:'Ordens de Serviço',
-    historico:'Histórico por Equipamento',
-    tecnicos:'Técnicos',
-    relatorios:'Relatórios'
+    dashboard: 'Dashboard',
+    ordens: 'Ordens de Serviço',
+    historico: 'Histórico por Equipamento',
+    tecnicos: 'Técnicos',
+    relatorios: 'Relatórios',
   };
   setText('page-title', titles[page] || page);
+
   renderCurrentPage();
 }
 
+/**
+ * Renderiza página atual
+ */
 function renderCurrentPage() {
-  const r = {
+  const renderers = {
     dashboard: renderDashboard,
     ordens: renderOS,
     historico: renderHistorico,
     tecnicos: renderTecnicos,
-    relatorios: renderRelatorios
+    relatorios: renderRelatorios,
   };
-  r[currentPage]?.();
+
+  const renderer = renderers[currentPage];
+  if (renderer && typeof renderer === 'function') {
+    renderer();
+  }
 }
 
+/**
+ * Recarrega dados
+ */
 function reloadData() {
   setSyncBadge('syncing', 'Recarregando...');
   loadGoogleSheets();
 }
 
-// ── FUNÇÕES DE BADGE ───────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// FUNÇÕES DE BADGE
+// ══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Retorna badge de tipo
+ */
 function badgeTipo(x) {
-  return isCor(x)
-    ? '<span class="badge b-cor">Corretiva</span>'
-    : '<span class="badge b-prev">Preventiva</span>';
+  if (isCor(x)) {
+    return '<span class="badge b-cor">Corretiva</span>';
+  }
+  return '<span class="badge b-prev">Preventiva</span>';
 }
 
-function badgeStatus(s) {
-  const m = {'Concluída':'b-conc','Em andamento':'b-and','Aberta':'b-ab','Urgente':'b-urg'};
-  return `<span class="badge ${m[s]||'b-ab'}">${s||'—'}</span>`;
+/**
+ * Retorna badge de status
+ */
+function badgeStatus(status) {
+  const map = {
+    Concluída: 'b-conc',
+    'Em andamento': 'b-and',
+    Aberta: 'b-ab',
+    Urgente: 'b-urg',
+  };
+  const badgeClass = map[status] || 'b-ab';
+  return `<span class="badge ${badgeClass}">${status || '—'}</span>`;
 }
 
-// ── DASHBOARD ──────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Renderiza dashboard
+ */
 function renderDashboard() {
   const total = OS.length;
-  const conc  = count(OS, x => x.status === 'Concluída');
-  const cor   = count(OS, isCor);
-  const prev  = count(OS, isPrev);
-  
+  const conc = count(OS, (x) => x.status === 'Concluída');
+  const cor = count(OS, isCor);
+  const prev = count(OS, isPrev);
+
   setText('kpi-total', total);
   setText('kpi-conc', conc);
-  setText('kpi-conc-pct', `${total ? Math.round(conc/total*100) : 0}% do total`);
+  setText('kpi-conc-pct', `${percent(conc, total)}% do total`);
   setText('kpi-cor', cor);
-  setText('kpi-cor-pct', `${total ? Math.round(cor/total*100) : 0}% do total`);
+  setText('kpi-cor-pct', `${percent(cor, total)}% do total`);
   setText('kpi-prev', prev);
-  setText('kpi-prev-pct', `${total ? Math.round(prev/total*100) : 0}% do total`);
-  
+  setText('kpi-prev-pct', `${percent(prev, total)}% do total`);
+
   renderDashTable();
-  renderBar('setor-chart',   sorted(groupBy(OS, x=>x.setor)).slice(0,6),   '#2563EB');
-  renderBar('tecnico-chart', sorted(groupBy(OS, x=>x.tecnico)).slice(0,5), '#1D4ED8');
+  renderBar(
+    'setor-chart',
+    sorted(groupBy(OS, (x) => x.setor)).slice(0, 6),
+    '#2563EB'
+  );
+  renderBar(
+    'tecnico-chart',
+    sorted(groupBy(OS, (x) => x.tecnico)).slice(0, 5),
+    '#1D4ED8'
+  );
   renderTimeline();
-  renderBar('peca-chart',    sorted(groupBy(OS, x=>x.peca)).slice(0,5),    '#D97706');
+  renderBar(
+    'peca-chart',
+    sorted(groupBy(OS, (x) => x.peca)).slice(0, 5),
+    '#D97706'
+  );
   renderStatusChart();
 }
 
+/**
+ * Renderiza tabela do dashboard
+ */
 function renderDashTable() {
   let data = OS.slice().reverse();
-  if (dashTab === 'Corretiva')  data = data.filter(isCor);
-  if (dashTab === 'Preventiva') data = data.filter(isPrev);
+
+  if (dashTab === 'Corretiva') {
+    data = data.filter(isCor);
+  } else if (dashTab === 'Preventiva') {
+    data = data.filter(isPrev);
+  }
+
   data = data.slice(0, 10);
-  
-  $('dash-tbody').innerHTML = data.map(x => `<tr>
+
+  const tbody = $('dash-tbody');
+  if (!tbody) return;
+
+  if (isEmpty(data)) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">Sem dados</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data
+    .map(
+      (x) => `<tr>
     <td class="os-num">#${x.n}</td>
     <td style="white-space:nowrap">${x.data}</td>
     <td>${x.setor}</td>
     <td class="truncate" style="max-width:120px" title="${x.equip}">${x.equip}</td>
     <td>${badgeTipo(x)}</td>
-    <td>${x.tecnico}</td>
+    <td>${x.tecnico || '—'}</td>
     <td>${badgeStatus(x.status)}</td>
-  </tr>`).join('') || '<tr><td colspan="7" class="empty">Sem dados</td></tr>';
+  </tr>`
+    )
+    .join('');
 }
 
-function renderBar(id, data, color) {
-  const el = $(id);
-  if (!el || !data.length) return;
-  
-  const max = data[0][1];
-  el.innerHTML = data.map(([label, val]) => `
+/**
+ * Renderiza gráfico de barras
+ */
+function renderBar(elementId, data, color) {
+  const el = $(elementId);
+  if (!el || isEmpty(data)) {
+    return;
+  }
+
+  const max = data.length > 0 ? data[0][1] : 1;
+
+  el.innerHTML = data
+    .map(([label, val]) => {
+      const percent = Math.round((val / max) * 100);
+      return `
     <div class="bar-row">
-      <div class="bar-label" title="${label}">${label||'—'}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/max*100)}%;background:${color}"></div></div>
+      <div class="bar-label" title="${label}">${label || '—'}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${percent}%;background:${color}"></div>
+      </div>
       <div class="bar-val">${val}</div>
-    </div>`).join('');
+    </div>`;
+    })
+    .join('');
 }
 
+/**
+ * Renderiza timeline
+ */
 function renderTimeline() {
-  const colors = {'Concluída':'#16A34A','Em andamento':'#D97706','Aberta':'#2563EB'};
-  const recent = OS.slice().reverse().slice(0,6);
-  
-  $('timeline').innerHTML = recent.map((x,i) => `
+  const colors = {
+    Concluída: '#16A34A',
+    'Em andamento': '#D97706',
+    Aberta: '#2563EB',
+  };
+
+  const recent = OS.slice().reverse().slice(0, 6);
+  const timelineEl = $('timeline');
+
+  if (!timelineEl) return;
+
+  if (isEmpty(recent)) {
+    timelineEl.innerHTML = '<div class="empty">Sem dados</div>';
+    return;
+  }
+
+  timelineEl.innerHTML = recent
+    .map((x, i) => {
+      const dotColor = colors[x.status] || '#2563EB';
+      const hasLine = i < 5 ? '<div class="tl-line"></div>' : '';
+
+      return `
     <div class="tl-item">
       <div class="tl-dot-col">
-        <div class="tl-dot" style="background:${colors[x.status]||'#2563EB'}"></div>
-        ${i<5?'<div class="tl-line"></div>':''}
+        <div class="tl-dot" style="background:${dotColor}"></div>
+        ${hasLine}
       </div>
       <div>
         <div class="tl-title">OS #${x.n} — ${x.equip}</div>
-        <div class="tl-time">${x.data} ${x.hora} · ${x.tecnico||'—'}</div>
+        <div class="tl-time">${x.data} ${x.hora} · ${x.tecnico || '—'}</div>
       </div>
-    </div>`).join('');
+    </div>`;
+    })
+    .join('');
 }
 
+/**
+ * Renderiza gráfico de status
+ */
 function renderStatusChart() {
-  const g = groupBy(OS, x => x.status);
-  const colors = {'Concluída':'#16A34A','Em andamento':'#D97706','Aberta':'#2563EB','Urgente':'#DC2626'};
-  const max = Math.max(...Object.values(g), 1);
-  
-  $('status-chart').innerHTML = sorted(g).map(([label, val]) => `
+  const g = groupBy(OS, (x) => x.status);
+  const colors = {
+    Concluída: '#16A34A',
+    'Em andamento': '#D97706',
+    Aberta: '#2563EB',
+    Urgente: '#DC2626',
+  };
+
+  const maxVal = Math.max(...Object.values(g), 1);
+  const el = $('status-chart');
+
+  if (!el) return;
+
+  el.innerHTML = sorted(g)
+    .map(([label, val]) => {
+      const pct = Math.round((val / maxVal) * 100);
+      const color = colors[label] || '#6B7280';
+
+      return `
     <div class="bar-row">
-      <div class="bar-label">${label||'—'}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/max*100)}%;background:${colors[label]||'#6B7280'}"></div></div>
+      <div class="bar-label">${label || '—'}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%;background:${color}"></div>
+      </div>
       <div class="bar-val">${val}</div>
-    </div>`).join('');
+    </div>`;
+    })
+    .join('');
 }
 
-// ── ORDENS DE SERVIÇO ──────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// ORDENS DE SERVIÇO
+// ══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Renderiza página de ordens de serviço
+ */
 function renderOS() {
-  const search = ($('os-search')?.value||'').toLowerCase();
+  const searchVal = ($('os-search')?.value || '').toLowerCase();
   let data = OS.slice().reverse();
-  
+
+  // Aplica filtro de status/tipo
   if (osFilter !== 'Todos') {
-    if (osFilter==='Corretiva')  data = data.filter(isCor);
-    else if (osFilter==='Preventiva') data = data.filter(isPrev);
-    else data = data.filter(x => x.status === osFilter);
+    if (osFilter === 'Corretiva') {
+      data = data.filter(isCor);
+    } else if (osFilter === 'Preventiva') {
+      data = data.filter(isPrev);
+    } else {
+      data = data.filter((x) => x.status === osFilter);
+    }
   }
-  
-  if (search) {
-    data = data.filter(x =>
-      [x.n, x.equip, x.setor, x.tecnico, x.falha, x.servico].some(f=>(f||'').toLowerCase().includes(search))
+
+  // Aplica busca
+  if (searchVal) {
+    data = data.filter((x) =>
+      [x.n, x.equip, x.setor, x.tecnico, x.falha, x.servico].some((field) =>
+        (field || '').toLowerCase().includes(searchVal)
+      )
     );
   }
 
-  $('os-tbody').innerHTML = data.map(x => `<tr>
-    <td class="os-num">#${x.n}</td>
-    <td style="white-space:nowrap">${x.data}</td>
-    <td>${x.setor}</td>
-    <td class="truncate" style="max-width:130px" title="${x.equip}">${x.equip}</td>
-    <td class="truncate" style="max-width:130px" title="${x.falha}">${x.falha}</td>
-    <td>${badgeTipo(x)}</td>
-    <td class="truncate" style="max-width:180px" title="${x.servico}">${x.servico}</td>
-    <td>${x.tecnico||'—'}</td>
-    <td>${badgeStatus(x.status)}</td>
-  </tr>`).join('') || '<tr><td colspan="9" class="empty">Nenhuma OS encontrada</td></tr>';
+  // Renderiza tabela
+  const tbody = $('os-tbody');
+  if (!tbody) return;
 
+  if (isEmpty(data)) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">Nenhuma OS encontrada</td></tr>';
+  } else {
+    tbody.innerHTML = data
+      .map(
+        (x) => `<tr>
+      <td class="os-num">#${x.n}</td>
+      <td style="white-space:nowrap">${x.data}</td>
+      <td>${x.setor}</td>
+      <td class="truncate" style="max-width:130px" title="${x.equip}">${x.equip}</td>
+      <td class="truncate" style="max-width:130px" title="${x.falha}">${x.falha}</td>
+      <td>${badgeTipo(x)}</td>
+      <td class="truncate" style="max-width:180px" title="${x.servico}">${x.servico}</td>
+      <td>${x.tecnico || '—'}</td>
+      <td>${badgeStatus(x.status)}</td>
+    </tr>`
+      )
+      .join('');
+  }
+
+  // Atualiza contador
   setText('os-count', `Mostrando ${data.length} de ${OS.length} ordens de serviço`);
   setText('os-total-badge', `${OS.length} OS`);
 }
 
-// ── HISTÓRICO ──────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// HISTÓRICO
+// ══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Renderiza página de histórico
+ */
 function renderHistorico() {
-  const search = ($('hist-search')?.value||'').toLowerCase();
-  const grupos = {};
+  const searchVal = ($('hist-search')?.value || '').toLowerCase();
   
-  OS.forEach(x => {
-    if (!grupos[x.equip]) grupos[x.equip] = [];
+  // Agrupa por equipamento
+  const grupos = {};
+  OS.forEach((x) => {
+    if (!grupos[x.equip]) {
+      grupos[x.equip] = [];
+    }
     grupos[x.equip].push(x);
   });
-  
+
+  // Filtra
   let keys = Object.keys(grupos).sort();
-  if (search) keys = keys.filter(k => k.toLowerCase().includes(search));
+  if (searchVal) {
+    keys = keys.filter((k) => k.toLowerCase().includes(searchVal));
+  }
 
   const el = $('hist-content');
-  if (!keys.length) {
+  if (!el) return;
+
+  if (isEmpty(keys)) {
     el.innerHTML = '<div class="empty">Nenhum equipamento encontrado</div>';
     return;
   }
-  
-  el.innerHTML = keys.map(k => {
-    const os = grupos[k];
-    return `<div style="border-bottom:1px solid var(--border)">
+
+  el.innerHTML = keys
+    .map((equip) => {
+      const osData = grupos[equip];
+      return `<div style="border-bottom:1px solid var(--border)">
       <div class="hist-group-header">
-        <span class="hist-group-name">${k}</span>
-        <span class="hist-group-meta">${os.length} OS · ${os[0].setor}</span>
+        <span class="hist-group-name">${equip}</span>
+        <span class="hist-group-meta">${osData.length} OS · ${osData[0]?.setor || '—'}</span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
-      <tbody>${os.map(x=>`<tr>
-        <td class="os-num">#${x.n}</td>
-        <td style="white-space:nowrap">${x.data}</td>
-        <td>${badgeTipo(x)}</td>
-        <td class="truncate" style="max-width:240px" title="${x.servico}">${x.servico}</td>
-        <td>${x.tecnico||'—'}</td>
-        <td>${badgeStatus(x.status)}</td>
-      </tr>`).join('')}</tbody></table></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>OS</th>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Serviço realizado</th>
+              <th>Técnico</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${osData
+              .map(
+                (x) => `<tr>
+              <td class="os-num">#${x.n}</td>
+              <td style="white-space:nowrap">${x.data}</td>
+              <td>${badgeTipo(x)}</td>
+              <td class="truncate" style="max-width:240px" title="${x.servico}">${x.servico}</td>
+              <td>${x.tecnico || '—'}</td>
+              <td>${badgeStatus(x.status)}</td>
+            </tr>`
+              )
+              .join('')}
+          </tbody>
+        </table>
+      </div>
     </div>`;
-  }).join('');
+    })
+    .join('');
 }
 
-// ── TÉCNICOS ───────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// TÉCNICOS
+// ══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Renderiza página de técnicos
+ */
 function renderTecnicos() {
-  const tecs = {};
-  
-  OS.forEach(x => {
-    const t = (x.tecnico||'—').trim();
-    if(!tecs[t]) tecs[t]={total:0,cor:0,prev:0,conc:0,aberto:0};
-    tecs[t].total++;
-    if(isCor(x)) tecs[t].cor++; else tecs[t].prev++;
-    if(x.status==='Concluída') tecs[t].conc++;
-    else tecs[t].aberto++;
+  const tecnicos = {};
+
+  // Agrupa dados por técnico
+  OS.forEach((x) => {
+    const tecnico = (x.tecnico || '—').trim();
+    if (!tecnicos[tecnico]) {
+      tecnicos[tecnico] = {
+        total: 0,
+        cor: 0,
+        prev: 0,
+        conc: 0,
+        aberto: 0,
+      };
+    }
+    tecnicos[tecnico].total += 1;
+
+    if (isCor(x)) {
+      tecnicos[tecnico].cor += 1;
+    } else {
+      tecnicos[tecnico].prev += 1;
+    }
+
+    if (x.status === 'Concluída') {
+      tecnicos[tecnico].conc += 1;
+    } else {
+      tecnicos[tecnico].aberto += 1;
+    }
   });
-  
-  const entries = sorted(groupBy(OS, x=>(x.tecnico||'—').trim()));
 
-  $('tec-kpis').innerHTML = entries.slice(0,4).map(([tec,val]) => `
-    <div class="kpi"><div class="kpi-bar" style="background:#2563EB"></div>
-    <div class="kpi-label">${tec}</div>
-    <div class="kpi-val">${val}</div>
-    <div class="kpi-sub">OS realizadas</div></div>`).join('');
+  const entries = sorted(groupBy(OS, (x) => (x.tecnico || '—').trim()));
 
-  $('tec-tbody').innerHTML = entries.map(([tec]) => {
-    const t = tecs[tec];
-    return `<tr>
+  // Renderiza KPIs
+  const kpiEl = $('tec-kpis');
+  if (kpiEl) {
+    kpiEl.innerHTML = entries
+      .slice(0, 4)
+      .map(
+        ([tec, val]) => `
+      <div class="kpi">
+        <div class="kpi-bar" style="background:#2563EB"></div>
+        <div class="kpi-label">${tec}</div>
+        <div class="kpi-val">${val}</div>
+        <div class="kpi-sub">OS realizadas</div>
+      </div>`
+      )
+      .join('');
+  }
+
+  // Renderiza tabela
+  const tbody = $('tec-tbody');
+  if (tbody) {
+    tbody.innerHTML = entries
+      .map(([tec]) => {
+        const t = tecnicos[tec];
+        return `<tr>
       <td style="font-weight:700">${tec}</td>
-      <td>${t.total}</td><td>${t.cor}</td><td>${t.prev}</td>
+      <td>${t.total}</td>
+      <td>${t.cor}</td>
+      <td>${t.prev}</td>
       <td><span class="badge b-conc">${t.conc}</span></td>
-      <td>${t.aberto>0?`<span class="badge b-ab">${t.aberto}</span>`:'—'}</td>
+      <td>${t.aberto > 0 ? `<span class="badge b-ab">${t.aberto}</span>` : '—'}</td>
     </tr>`;
-  }).join('');
-  
+      })
+      .join('');
+  }
+
+  // Renderiza gráfico
   renderBar('tec-chart', entries, '#1D4ED8');
 }
 
-// ── RELATÓRIOS ─────────────────────────────────────────────────────────
-function renderRelatorios() {
-  const setores = sorted(groupBy(OS, x=>x.setor));
-  const equips  = sorted(groupBy(OS, x=>x.equip));
-  const pecas   = sorted(groupBy(OS, x=>x.peca));
-  const tipos   = sorted(groupBy(OS, x=>x.tipo));
-  const total   = OS.length;
+// ══════════════════════════════════════════════════════════════════════════
+// RELATÓRIOS
+// ══════════════════════════════════════════════════════════════════════════
 
-  $('rel-setores').innerHTML = setores.slice(0,10).map(([k,v]) =>
-    `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
-  $('rel-equip').innerHTML = equips.slice(0,10).map(([k,v]) =>
-    `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
-  $('rel-pecas').innerHTML = pecas.slice(0,8).map(([k,v]) =>
-    `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
-  $('rel-tbody').innerHTML = tipos.map(([k,v]) =>
-    `<tr><td>${k}</td><td>${v}</td><td>${Math.round(v/total*100)}%</td></tr>`).join('');
+/**
+ * Renderiza página de relatórios
+ */
+function renderRelatorios() {
+  const setores = sorted(groupBy(OS, (x) => x.setor));
+  const equips = sorted(groupBy(OS, (x) => x.equip));
+  const pecas = sorted(groupBy(OS, (x) => x.peca));
+  const tipos = sorted(groupBy(OS, (x) => x.tipo));
+  const total = OS.length;
+
+  // Setores
+  const setoresEl = $('rel-setores');
+  if (setoresEl) {
+    setoresEl.innerHTML = setores
+      .slice(0, 10)
+      .map(
+        ([k, v]) =>
+          `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`
+      )
+      .join('');
+  }
+
+  // Equipamentos
+  const equipEl = $('rel-equip');
+  if (equipEl) {
+    equipEl.innerHTML = equips
+      .slice(0, 10)
+      .map(
+        ([k, v]) =>
+          `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`
+      )
+      .join('');
+  }
+
+  // Peças
+  const pecasEl = $('rel-pecas');
+  if (pecasEl) {
+    pecasEl.innerHTML = pecas
+      .slice(0, 8)
+      .map(
+        ([k, v]) =>
+          `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`
+      )
+      .join('');
+  }
+
+  // Tabela de tipos
+  const tbody = $('rel-tbody');
+  if (tbody) {
+    tbody.innerHTML = tipos
+      .map(
+        ([k, v]) =>
+          `<tr><td>${k}</td><td>${v}</td><td>${percent(v, total)}%</td></tr>`
+      )
+      .join('');
+  }
 }
 
-// ── EVENTOS ────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// EVENT LISTENERS
+// ══════════════════════════════════════════════════════════════════════════
 
-// Navegação sidebar
-document.querySelectorAll('.nav-item[data-page]').forEach(item =>
-  item.addEventListener('click', () => showPage(item.dataset.page))
-);
+// Navegação lateral
+document.querySelectorAll('.nav-item[data-page]').forEach((item) => {
+  item.addEventListener('click', () => {
+    showPage(item.dataset.page);
+  });
+});
 
 // Links "Ver todos"
-document.querySelectorAll('[data-goto]').forEach(el =>
-  el.addEventListener('click', () => showPage(el.dataset.goto))
-);
+document.querySelectorAll('[data-goto]').forEach((el) => {
+  el.addEventListener('click', () => {
+    showPage(el.dataset.goto);
+  });
+});
 
 // Dashboard tabs
-document.querySelectorAll('#dash-tabs .tab').forEach(tab =>
+document.querySelectorAll('#dash-tabs .tab').forEach((tab) => {
   tab.addEventListener('click', () => {
-    document.querySelectorAll('#dash-tabs .tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('#dash-tabs .tab').forEach((t) => {
+      t.classList.remove('active');
+    });
     tab.classList.add('active');
     dashTab = tab.dataset.filter || 'Todas';
     renderDashTable();
-  })
-);
+  });
+});
 
-// OS filters
-document.querySelectorAll('#os-filters .filter-btn').forEach(btn =>
+// Filtros de OS
+document.querySelectorAll('#os-filters .filter-btn').forEach((btn) => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('#os-filters .filter-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('#os-filters .filter-btn').forEach((b) => {
+      b.classList.remove('active');
+    });
     btn.classList.add('active');
     osFilter = btn.dataset.filter || 'Todos';
     renderOS();
-  })
-);
+  });
+});
 
-// Search inputs
-$('os-search')?.addEventListener('input', renderOS);
-$('hist-search')?.addEventListener('input', renderHistorico);
+// Busca de OS
+const osSearchEl = $('os-search');
+if (osSearchEl) {
+  osSearchEl.addEventListener('input', renderOS);
+}
 
-// ── INICIALIZAÇÃO ──────────────────────────────────────────────────────
+// Busca de histórico
+const histSearchEl = $('hist-search');
+if (histSearchEl) {
+  histSearchEl.addEventListener('input', renderHistorico);
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// INICIALIZAÇÃO
+// ══════════════════════════════════════════════════════════════════════════
+
 window.addEventListener('DOMContentLoaded', () => {
   loadGoogleSheets();
 });
