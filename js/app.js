@@ -3,6 +3,29 @@
 //  Integração com Google Sheets via API pública
 // ============================================================
 
+const CONFIG = {
+  SPREADSHEET_ID: 'seu-id-aqui',
+  API_KEY: 'sua-api-key-aqui',
+  AUTO_REFRESH_MINUTOS: 5,
+  ABA_OS: 'OS',
+  ABA_ESTOQUE: 'Estoque',
+  COLUNAS: {
+    NUM_OS: 0,           // A
+    DATA: 1,             // B
+    HORA: 2,             // C
+    SOLICITANTE: 3,      // D
+    SETOR: 6,            // G
+    EQUIPAMENTO: 7,      // H
+    FALHA: 25,           // Z
+    INTERVENCAO: 29,     // AD
+    SERVICO: 30,         // AE
+    PECA: 31,            // AF
+    SEGURANCA: 40,       // AO
+    TECNICO: 41,         // AP
+    STATUS: 42,          // AQ
+  }
+};
+
 const app = (() => {
 
   let OS_DATA = [];
