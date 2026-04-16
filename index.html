@@ -453,9 +453,19 @@ const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4Mrp
 const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676';
 const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
 
+// NOVAS COLUNAS CONFORME PLANILHA
 const COL = {
-  NUM_OS:0, DATA:1, HORA:2, SOLICITANTE:3, SETOR:4, EQUIPAMENTO:5, FALHA:6, INTERVENCAO:7,
-  SERVICO:8, PECAS:9, SEGURANCA_EQ:10, INDICACAO_SEG:11, COLABORADOR:12, TECNICO:13, STATUS:14,
+  NUM_OS: 0,        // Coluna A: Nº OS
+  DATA: 1,          // Coluna B: Data
+  HORA: 2,          // Coluna C: Hora
+  SOLICITANTE: 3,   // Coluna D: Solicitante
+  SETOR: 4,         // Coluna E: Setor
+  EQUIPAMENTO: 5,   // Coluna F: Equipamento
+  FALHA: 6,         // Coluna G: Falha
+  INTERVENCAO: 7,   // Coluna H: Intervenção Realizada
+  SERVICO: 8,       // Coluna I: Serviço Realizado
+  TECNICO: 9,       // Coluna J: Técnico
+  STATUS: 10        // Coluna K: Status da OS
 };
 
 let OS = [], osFilter = 'Todos', dashTab = 'Todas', currentPage = 'dashboard';
@@ -496,13 +506,17 @@ function parseCSV(text) {
   return lines.slice(1)
     .filter(r => r.length > 5 && r[COL.NUM_OS] && r[COL.NUM_OS].trim())
     .map(r => ({
-      numOS:r[COL.NUM_OS]?.trim() || '', data:r[COL.DATA]?.trim() || '', hora:r[COL.HORA]?.trim() || '',
-      solicitante:r[COL.SOLICITANTE]?.trim() || '', setor:r[COL.SETOR]?.trim() || '',
-      equipamento:r[COL.EQUIPAMENTO]?.trim() || '', falha:r[COL.FALHA]?.trim() || '',
-      intervencao:r[COL.INTERVENCAO]?.trim() || '', servico:r[COL.SERVICO]?.trim() || '',
-      pecas:r[COL.PECAS]?.trim() || '', seguranca:r[COL.SEGURANCA_EQ]?.trim() || '',
-      indicacaoSeg:r[COL.INDICACAO_SEG]?.trim() || '', colaborador:r[COL.COLABORADOR]?.trim() || '',
-      tecnico:r[COL.TECNICO]?.trim() || '', status:r[COL.STATUS]?.trim() || 'Aberta',
+      numOS: r[COL.NUM_OS]?.trim() || '',
+      data: r[COL.DATA]?.trim() || '',
+      hora: r[COL.HORA]?.trim() || '',
+      solicitante: r[COL.SOLICITANTE]?.trim() || '',
+      setor: r[COL.SETOR]?.trim() || '',
+      equipamento: r[COL.EQUIPAMENTO]?.trim() || '',
+      falha: r[COL.FALHA]?.trim() || '',
+      intervencao: r[COL.INTERVENCAO]?.trim() || '',
+      servico: r[COL.SERVICO]?.trim() || '',
+      tecnico: r[COL.TECNICO]?.trim() || '',
+      status: r[COL.STATUS]?.trim() || 'Aberta'
     }));
 }
 
@@ -569,7 +583,7 @@ function renderDashboard() {
   renderBar('setor-chart', sorted(groupBy(OS, x=>x.setor)).slice(0,6), '#60A5FA');
   renderBar('tecnico-chart', sorted(groupBy(OS, x=>x.tecnico)).slice(0,5), '#2563EB');
   renderTimeline();
-  renderBar('peca-chart', sorted(groupBy(OS, x=>x.pecas)).slice(0,5), '#D97706');
+  renderBar('peca-chart', sorted(groupBy(OS, x=>x.intervencao)).slice(0,5), '#D97706');
   renderStatusChart();
 }
 
@@ -705,14 +719,14 @@ function renderTecnicos() {
 function renderRelatorios() {
   const setores = sorted(groupBy(OS, x=>x.setor));
   const equips  = sorted(groupBy(OS, x=>x.equipamento));
-  const pecas   = sorted(groupBy(OS, x=>x.pecas));
+  const intervencoes = sorted(groupBy(OS, x=>x.intervencao));
   const tipos   = sorted(groupBy(OS, x=>x.intervencao));
   const total   = OS.length;
   $('rel-setores').innerHTML = setores.slice(0,10).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
   $('rel-equip').innerHTML = equips.slice(0,10).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
-  $('rel-pecas').innerHTML = pecas.slice(0,8).map(([k,v]) =>
+  $('rel-pecas').innerHTML = intervencoes.slice(0,8).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
   $('rel-tbody').innerHTML = tipos.map(([k,v]) =>
     `<tr><td>${k}</td><td>${v}</td><td>${Math.round(v/total*100)}%</td></tr>`).join('');
