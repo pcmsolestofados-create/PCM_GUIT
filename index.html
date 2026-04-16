@@ -453,19 +453,17 @@ const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4Mrp
 const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676';
 const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
 
-// NOVAS COLUNAS CONFORME PLANILHA
+// NOVAS COLUNAS CONFORME BANCO DE DADOS
 const COL = {
-  NUM_OS: 0,        // Coluna A: Nº OS
-  DATA: 1,          // Coluna B: Data
-  HORA: 2,          // Coluna C: Hora
-  SOLICITANTE: 3,   // Coluna D: Solicitante
-  SETOR: 4,         // Coluna E: Setor
-  EQUIPAMENTO: 5,   // Coluna F: Equipamento
-  FALHA: 6,         // Coluna G: Falha
-  INTERVENCAO: 7,   // Coluna H: Intervenção Realizada
-  SERVICO: 8,       // Coluna I: Serviço Realizado
-  TECNICO: 9,       // Coluna J: Técnico
-  STATUS: 10        // Coluna K: Status da OS
+  NUM_OS: 0,        // Coluna A
+  DATA: 1,          // Coluna B
+  SETOR: 6,         // Coluna G
+  EQUIPAMENTO: 7,   // Coluna H
+  FALHA: 25,        // Coluna Z
+  TIPO: 29,         // Coluna AD
+  SERVICO: 30,      // Coluna AE
+  TECNICO: 41,      // Coluna AP
+  STATUS: 42        // Coluna AQ
 };
 
 let OS = [], osFilter = 'Todos', dashTab = 'Todas', currentPage = 'dashboard';
@@ -475,8 +473,8 @@ const setText = (id, v) => { const el = $(id); if(el) el.textContent = v; };
 const groupBy = (arr, fn) => { const m={}; arr.forEach(x=>{ const k=fn(x)||'—'; m[k]=(m[k]||0)+1; }); return m; };
 const sorted  = obj => Object.entries(obj).sort((a,b)=>b[1]-a[1]);
 const count   = (arr, fn) => arr.filter(fn).length;
-const isCorretiva   = x => (x.intervencao||'').toLowerCase().includes('corretiva');
-const isPreventiva  = x => (x.intervencao||'').toLowerCase().includes('preventiva');
+const isCorretiva   = x => (x.tipo||'').toLowerCase().includes('corretiva');
+const isPreventiva  = x => (x.tipo||'').toLowerCase().includes('preventiva');
 
 function openForm() { window.open(FORM_URL, '_blank'); }
 function goToSheet() { window.open(SHEET_EDIT_URL, '_blank'); }
@@ -504,16 +502,14 @@ function parseCSV(text) {
   const sep = text.split('\n')[0]?.includes(';') ? ';' : ',';
   const lines = text.split('\n').map(l => l.split(sep).map(c => c.trim().replace(/^"|"$/g,'')));
   return lines.slice(1)
-    .filter(r => r.length > 5 && r[COL.NUM_OS] && r[COL.NUM_OS].trim())
+    .filter(r => r.length > COL.NUM_OS && r[COL.NUM_OS] && r[COL.NUM_OS].trim())
     .map(r => ({
       numOS: r[COL.NUM_OS]?.trim() || '',
       data: r[COL.DATA]?.trim() || '',
-      hora: r[COL.HORA]?.trim() || '',
-      solicitante: r[COL.SOLICITANTE]?.trim() || '',
       setor: r[COL.SETOR]?.trim() || '',
       equipamento: r[COL.EQUIPAMENTO]?.trim() || '',
       falha: r[COL.FALHA]?.trim() || '',
-      intervencao: r[COL.INTERVENCAO]?.trim() || '',
+      tipo: r[COL.TIPO]?.trim() || '',
       servico: r[COL.SERVICO]?.trim() || '',
       tecnico: r[COL.TECNICO]?.trim() || '',
       status: r[COL.STATUS]?.trim() || 'Aberta'
@@ -559,7 +555,7 @@ function renderCurrentPage() {
 
 function reloadData() { setSyncBadge('syncing', 'Recarregando...'); loadGoogleSheets(); }
 
-function badgeIntervencao(x) {
+function badgeTipo(x) {
   return isCorretiva(x) ? '<span class="badge b-cor">Corretiva</span>' : '<span class="badge b-prev">Preventiva</span>';
 }
 
@@ -583,7 +579,7 @@ function renderDashboard() {
   renderBar('setor-chart', sorted(groupBy(OS, x=>x.setor)).slice(0,6), '#60A5FA');
   renderBar('tecnico-chart', sorted(groupBy(OS, x=>x.tecnico)).slice(0,5), '#2563EB');
   renderTimeline();
-  renderBar('peca-chart', sorted(groupBy(OS, x=>x.intervencao)).slice(0,5), '#D97706');
+  renderBar('peca-chart', sorted(groupBy(OS, x=>x.tipo)).slice(0,5), '#D97706');
   renderStatusChart();
 }
 
@@ -595,7 +591,7 @@ function renderDashTable() {
   $('dash-tbody').innerHTML = data.map(x => `<tr>
     <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${x.setor}</td>
     <td class="truncate" style="max-width:120px" title="${x.equipamento}">${x.equipamento}</td>
-    <td>${badgeIntervencao(x)}</td><td>${x.tecnico}</td><td>${badgeStatus(x.status)}</td>
+    <td>${badgeTipo(x)}</td><td>${x.tecnico}</td><td>${badgeStatus(x.status)}</td>
   </tr>`).join('') || '<tr><td colspan="7" class="empty">Sem dados</td></tr>';
 }
 
@@ -621,7 +617,7 @@ function renderTimeline() {
         ${i<5?'<div class="tl-line"></div>':''}
       </div>
       <div><div class="tl-title">OS #${x.numOS} — ${x.equipamento}</div>
-      <div class="tl-time">${x.data} ${x.hora} · ${x.tecnico||'—'}</div></div>
+      <div class="tl-time">${x.data} · ${x.tecnico||'—'}</div></div>
     </div>`).join('');
 }
 
@@ -654,7 +650,7 @@ function renderOS() {
     <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${x.setor}</td>
     <td class="truncate" style="max-width:130px" title="${x.equipamento}">${x.equipamento}</td>
     <td class="truncate" style="max-width:130px" title="${x.falha}">${x.falha}</td>
-    <td>${badgeIntervencao(x)}</td>
+    <td>${badgeTipo(x)}</td>
     <td class="truncate" style="max-width:180px" title="${x.servico}">${x.servico}</td>
     <td>${x.tecnico||'—'}</td><td>${badgeStatus(x.status)}</td>
   </tr>`).join('') || '<tr><td colspan="9" class="empty">Nenhuma OS encontrada</td></tr>';
@@ -683,7 +679,7 @@ function renderHistorico() {
       </div>
       <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
       <tbody>${os.map(x=>`<tr>
-        <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${badgeIntervencao(x)}</td>
+        <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${badgeTipo(x)}</td>
         <td class="truncate" style="max-width:240px" title="${x.servico}">${x.servico}</td>
         <td>${x.tecnico||'—'}</td><td>${badgeStatus(x.status)}</td>
       </tr>`).join('')}</tbody></table></div>
@@ -719,14 +715,13 @@ function renderTecnicos() {
 function renderRelatorios() {
   const setores = sorted(groupBy(OS, x=>x.setor));
   const equips  = sorted(groupBy(OS, x=>x.equipamento));
-  const intervencoes = sorted(groupBy(OS, x=>x.intervencao));
-  const tipos   = sorted(groupBy(OS, x=>x.intervencao));
+  const tipos = sorted(groupBy(OS, x=>x.tipo));
   const total   = OS.length;
   $('rel-setores').innerHTML = setores.slice(0,10).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
   $('rel-equip').innerHTML = equips.slice(0,10).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
-  $('rel-pecas').innerHTML = intervencoes.slice(0,8).map(([k,v]) =>
+  $('rel-pecas').innerHTML = tipos.slice(0,8).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
   $('rel-tbody').innerHTML = tipos.map(([k,v]) =>
     `<tr><td>${k}</td><td>${v}</td><td>${Math.round(v/total*100)}%</td></tr>`).join('');
