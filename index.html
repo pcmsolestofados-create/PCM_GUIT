@@ -376,7 +376,7 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
 
           <div class="section-row three">
             <div class="panel"><div class="ph"><div class="pt">Atividade recente</div></div><div id="timeline"></div></div>
-            <div class="panel"><div class="ph"><div class="pt">Tipo de Intervenção</div></div><div class="chart-wrap" id="peca-chart"></div></div>
+            <div class="panel"><div class="ph"><div class="pt">Peça/Intervenção</div></div><div class="chart-wrap" id="peca-chart"></div></div>
             <div class="panel"><div class="ph"><div class="pt">Status das OS</div></div><div id="status-chart" class="chart-wrap"></div></div>
           </div>
         </div>
@@ -434,7 +434,7 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
         <div class="section-row three">
           <div class="panel"><div class="ph"><div class="pt">Setores com mais OS</div></div><div id="rel-setores"></div></div>
           <div class="panel"><div class="ph"><div class="pt">Equipamentos mais acionados</div></div><div id="rel-equip"></div></div>
-          <div class="panel"><div class="ph"><div class="pt">Intervenções realizadas</div></div><div id="rel-pecas"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Peças / Intervenções</div></div><div id="rel-pecas"></div></div>
         </div>
         <div class="panel" style="margin-top:16px;">
           <div class="ph"><div class="pt">Resumo geral das intervenções</div></div>
@@ -449,9 +449,21 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
 
 <script>
 // ── CONFIGURAÇÃO ──────────────────────────────────────────────────────
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?output=csv';
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?gid=1091192334&single=true&output=csv';
 const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676';
 const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
+
+const COL = {
+  NUM_OS:0,    // A
+  DATA:1,      // B
+  SETOR:6,     // G
+  EQUIPAMENTO:7, // H
+  FALHA:25,    // Z
+  INTERVENCAO:29, // AD
+  SERVICO:30,  // AE
+  TECNICO:41,  // AP
+  STATUS:42,   // AQ
+};
 
 let OS = [], osFilter = 'Todos', dashTab = 'Todas', currentPage = 'dashboard';
 
@@ -470,10 +482,7 @@ async function loadGoogleSheets() {
   try {
     setSyncBadge('syncing', 'Sincronizando...');
     const response = await fetch(SHEET_URL);
-    const arrayBuffer = await response.arrayBuffer();
-    const decoder = new TextDecoder('utf-8');
-    const csvText = decoder.decode(arrayBuffer);
-    
+    const csvText = await response.text();
     OS = parseCSV(csvText);
     if (!OS.length) throw new Error('Nenhuma OS encontrada');
     setSyncBadge('ok', `${OS.length} OS carregadas`);
@@ -489,31 +498,18 @@ async function loadGoogleSheets() {
 }
 
 function parseCSV(text) {
-  const lines = text.split('\n');
-  if (!lines.length) return [];
-  
-  // Detecta separador
-  const sep = lines[0].includes(';') ? ';' : ',';
-  
-  // Parse das linhas
-  const dados = lines.slice(1).map(line => {
-    const cols = line.split(sep).map(c => c.trim().replace(/^"|"$/g, ''));
-    return {
-      numOS: cols[0] || '',
-      data: cols[1] || '',
-      solicitante: cols[2] || '',
-      setor: cols[3] || '',
-      equipamento: cols[4] || '',
-      falha: cols[5] || '',
-      intervencao: cols[6] || '',
-      servico: cols[7] || '',
-      tecnico: cols[8] || '',
-      status: cols[9] || 'Aberta'
-    };
-  });
-  
-  // Filtra linhas vazias
-  return dados.filter(r => r.numOS && r.numOS.trim() && r.numOS !== 'Nº OS');
+  const sep = text.split('\n')[0]?.includes(';') ? ';' : ',';
+  const lines = text.split('\n').map(l => l.split(sep).map(c => c.trim().replace(/^"|"$/g,'')));
+  return lines.slice(1)
+    .filter(r => r.length > 5 && r[COL.NUM_OS] && r[COL.NUM_OS].trim())
+    .map(r => ({
+      numOS:r[COL.NUM_OS]?.trim() || '', data:r[COL.DATA]?.trim() || '',
+      setor:r[COL.SETOR]?.trim() || '', equipamento:r[COL.EQUIPAMENTO]?.trim() || '',
+      falha:r[COL.FALHA]?.trim() || '', intervencao:r[COL.INTERVENCAO]?.trim() || '',
+      servico:r[COL.SERVICO]?.trim() || '', tecnico:r[COL.TECNICO]?.trim() || '',
+      status:r[COL.STATUS]?.trim() || 'Aberta',
+      hora:'', solicitante:'', pecas:'', seguranca:'', indicacaoSeg:'', colaborador:'',
+    }));
 }
 
 function updateStorageInfo() {
@@ -579,7 +575,7 @@ function renderDashboard() {
   renderBar('setor-chart', sorted(groupBy(OS, x=>x.setor)).slice(0,6), '#60A5FA');
   renderBar('tecnico-chart', sorted(groupBy(OS, x=>x.tecnico)).slice(0,5), '#2563EB');
   renderTimeline();
-  renderBar('peca-chart', sorted(groupBy(OS, x=>x.intervencao)).slice(0,5), '#D97706');
+  renderBar('peca-chart', sorted(groupBy(OS, x=>x.pecas)).slice(0,5), '#D97706');
   renderStatusChart();
 }
 
@@ -617,7 +613,7 @@ function renderTimeline() {
         ${i<5?'<div class="tl-line"></div>':''}
       </div>
       <div><div class="tl-title">OS #${x.numOS} — ${x.equipamento}</div>
-      <div class="tl-time">${x.data} · ${x.tecnico||'—'}</div></div>
+      <div class="tl-time">${x.data} ${x.hora} · ${x.tecnico||'—'}</div></div>
     </div>`).join('');
 }
 
@@ -715,14 +711,14 @@ function renderTecnicos() {
 function renderRelatorios() {
   const setores = sorted(groupBy(OS, x=>x.setor));
   const equips  = sorted(groupBy(OS, x=>x.equipamento));
-  const intervencoes = sorted(groupBy(OS, x=>x.intervencao));
+  const pecas   = sorted(groupBy(OS, x=>x.pecas));
   const tipos   = sorted(groupBy(OS, x=>x.intervencao));
   const total   = OS.length;
   $('rel-setores').innerHTML = setores.slice(0,10).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
   $('rel-equip').innerHTML = equips.slice(0,10).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
-  $('rel-pecas').innerHTML = intervencoes.slice(0,8).map(([k,v]) =>
+  $('rel-pecas').innerHTML = pecas.slice(0,8).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
   $('rel-tbody').innerHTML = tipos.map(([k,v]) =>
     `<tr><td>${k}</td><td>${v}</td><td>${Math.round(v/total*100)}%</td></tr>`).join('');
