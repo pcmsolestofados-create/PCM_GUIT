@@ -1,179 +1,11 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sol Estofados — Sistema de Manutenção</title>
-<style>
-/* ... (Estilização omitida para brevidade) ... */
-</style>
-</head>
-<body>
-<div class="app">
-
-  <!-- SIDEBAR APRIMORADO -->
-  <div class="sidebar">
-    <div class="logo">
-      <div class="logo-icon">⚙️</div>
-      <div class="logo-name">Sol Estofados</div>
-      <div class="logo-sub">Manutenção</div>
-    </div>
-
-    <!-- Estatísticas Sidebar -->
-    <div class="sidebar-stats">
-      <div class="stat-badge">
-        <span class="stat-badge-label">Total OS</span>
-        <span class="stat-badge-val" id="sb-total">—</span>
-      </div>
-      <div class="stat-badge">
-        <span class="stat-badge-label">Concluídas</span>
-        <span class="stat-badge-val" id="sb-conc">—</span>
-      </div>
-    </div>
-
-    <!-- Sincronização -->
-    <div class="sync-indicator" id="sync-indicator">
-      <div class="sync-icon">📊</div>
-      <p><strong>Conectando...</strong><br>Sincronizando com<br>Google Sheets</p>
-    </div>
-    <div class="data-info" id="data-info" style="display:none">
-      <p id="data-info-text"></p>
-      <div class="sync-status" id="sync-status"></div>
-    </div>
-
-    <!-- Link Planilha -->
-    <a class="sheet-link-btn" href="https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676" target="_blank" title="Abrir planilha">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="7 10 12 15 17 10"/>
-        <line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
-      Abrir
-    </a>
-
-    <!-- Navegação -->
-    <div class="nav-sec">Principal</div>
-    <div class="nav-item active" data-page="dashboard">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
-      <span>Dashboard</span>
-      <div class="nav-item-indicator"></div>
-    </div>
-    <div class="nav-item" data-page="ordens">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><line x1="5" y1="7" x2="11" y2="7"/><line x1="5" y1="10" x2="9" y2="10"/></svg>
-      <span>Ordens</span>
-      <div class="nav-item-indicator"></div>
-    </div>
-    <div class="nav-item" data-page="historico">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="5.5"/><line x1="8" y1="5" x2="8" y2="8"/><line x1="8" y1="8" x2="10.5" y2="10.5"/></svg>
-      <span>Histórico</span>
-      <div class="nav-item-indicator"></div>
-    </div>
-    <div class="nav-sec">Análise</div>
-    <div class="nav-item" data-page="tecnicos">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="2.5"/><path d="M3 14c0-3.3 2.2-5 5-5s5 1.7 5 5"/></svg>
-      <span>Técnicos</span>
-      <div class="nav-item-indicator"></div>
-    </div>
-    <div class="nav-item" data-page="relatorios">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1.5"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="8" y2="9"/></svg>
-      <span>Relatórios</span>
-      <div class="nav-item-indicator"></div>
-    </div>
-  </div>
-
-  <!-- MAIN WRAPPER -->
-  <div class="main-wrapper">
-
-    <!-- TOPBAR APRIMORADA -->
-    <div class="topbar">
-      <div class="topbar-l">
-        <div class="breadcrumb">
-          <span>Sol Estofados</span>
-          <span class="breadcrumb-sep">/</span>
-          <span id="page-title">Carregando...</span>
-        </div>
-        <span class="sync-badge idle" id="sync-badge">Sincronizando...</span>
-      </div>
-      <div class="topbar-r">
-        <button class="btn btn-form" onclick="openForm()" title="Nova OS">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M12 5v14M5 12h14"/>
-          </svg>
-          Nova OS
-        </button>
-        <button class="btn btn-sheet" onclick="goToSheet()" title="Planilha">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          Planilha
-        </button>
-        <button class="btn btn-ghost" onclick="reloadData()" title="Recarregar">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v5h5M15 12v-5h-5"/><path d="M2.5 7c1-2 3-3 5.5-3 4 0 7 3 7 7s-3 7-7 7-7-3-7-7"/></svg>
-        </button>
-        <div class="avatar">LS</div>
-      </div>
-    </div>
-
-    <!-- CONTENT -->
-    <div class="content">
-
-      <!-- LOADING -->
-      <div class="page active" id="page-loading">
-        <div class="loading-container">
-          <div class="loading-spinner"></div>
-          <h2>Carregando dados...</h2>
-          <p>Sincronizando com sua planilha Google Sheets</p>
-        </div>
-      </div>
-
-      <!-- DASHBOARD -->
-      <div class="page" id="page-dashboard">
-        <!-- ... (Dashboard omitido para brevidade) ... -->
-      </div>
-
-      <!-- ORDENS DE SERVIÇO -->
-      <div class="page" id="page-ordens">
-        <!-- ... (Ordens de Serviço omitidas para brevidade) ... -->
-      </div>
-
-      <!-- HISTÓRICO -->
-      <div class="page" id="page-historico">
-        <!-- ... (Histórico omitido para brevidade) ... -->
-      </div>
-
-      <!-- TÉCNICOS -->
-      <div class="page" id="page-tecnicos">
-        <!-- ... (Técnicos omitidos para brevidade) ... -->
-      </div>
-
-      <!-- RELATÓRIOS -->
-      <div class="page" id="page-relatorios">
-        <!-- ... (Relatórios omitidos para brevidade) ... -->
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<script>
 // ── CONFIGURAÇÃO ──────────────────────────────────────────────────────
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?gid=1091192334&single=true&output=csv';
 const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676';
 const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
 
 const COL = {
-  NUM_OS:0,    // A
-  DATA:1,      // B
-  SOLICITANTE:2, // C
-  SETOR:3,     // D
-  EQUIPAMENTO:4, // E
-  FALHA:5,    // F
-  INTERVENCAO:6, // G
-  SERVICO:7,  // H
-  TECNICO:8,  // I
-  STATUS:9,   // J
+  NUM_OS:0, DATA:1, HORA:2, SETOR:3, EQUIPAMENTO:4, FALHA:5, INTERVENCAO:6,
+  SERVICO:7, PECAS:8, COLABORADOR:9, TECNICO:10, STATUS:11,
 };
 
 let OS = [], osFilter = 'Todos', dashTab = 'Todas', currentPage = 'dashboard';
@@ -214,12 +46,12 @@ function parseCSV(text) {
   return lines.slice(1)
     .filter(r => r.length > 5 && r[COL.NUM_OS] && r[COL.NUM_OS].trim())
     .map(r => ({
-      numOS:r[COL.NUM_OS]?.trim() || '', data:r[COL.DATA]?.trim() || '',
-      solicitante:r[COL.SOLICITANTE]?.trim() || '', setor:r[COL.SETOR]?.trim() || '',
-      equipamento:r[COL.EQUIPAMENTO]?.trim() || '', falha:r[COL.FALHA]?.trim() || '',
-      intervencao:r[COL.INTERVENCAO]?.trim() || '', servico:r[COL.SERVICO]?.trim() || '',
-      tecnico:r[COL.TECNICO]?.trim() || '', status:r[COL.STATUS]?.trim() || 'Aberta',
-      hora:'', pecas:'', seguranca:'', indicacaoSeg:'', colaborador:'',
+      numOS:r[COL.NUM_OS]?.trim() || '', data:r[COL.DATA]?.trim() || '', hora:r[COL.HORA]?.trim() || '',
+      setor:r[COL.SETOR]?.trim() || '', equipamento:r[COL.EQUIPAMENTO]?.trim() || '',
+      falha:r[COL.FALHA]?.trim() || '', intervencao:r[COL.INTERVENCAO]?.trim() || '',
+      servico:r[COL.SERVICO]?.trim() || '', pecas:r[COL.PECAS]?.trim() || '',
+      colaborador:r[COL.COLABORADOR]?.trim() || '', tecnico:r[COL.TECNICO]?.trim() || '',
+      status:r[COL.STATUS]?.trim() || 'Aberta',
     }));
 }
 
@@ -250,4 +82,141 @@ function showPage(page) {
   document.querySelectorAll('.nav-item[data-page]').forEach(n => n.classList.remove('active'));
   $(`page-${page}`)?.classList.add('active');
   document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
-  const titles = {dashboard:'Dashboard', ordens:'Ordens de Serviço', historico:'Histórico', tecnicos:'Técnicos', relator_
+  const titles = {dashboard:'Dashboard', ordens:'Ordens de Serviço', historico:'Histórico', tecnicos:'Técnicos', relatorios:'Relatórios'};
+  setText('page-title', titles[page] || page);
+  renderCurrentPage();
+}
+
+function renderCurrentPage() {
+  const r = {dashboard:renderDashboard, ordens:renderOS, historico:renderHistorico, tecnicos:renderTecnicos, relatorios:renderRelatorios};
+  r[currentPage]?.();
+}
+
+function reloadData() { setSyncBadge('syncing', 'Recarregando...'); loadGoogleSheets(); }
+
+function badgeIntervencao(x) {
+  return isCorretiva(x) ? '<span class="badge b-cor">Corretiva</span>' : '<span class="badge b-prev">Preventiva</span>';
+}
+
+function badgeStatus(s) {
+  const m = {'Concluída':'b-conc','Em andamento':'b-and','Aberta':'b-ab','Urgente':'b-urg'};
+  return `<span class="badge ${m[s]||'b-ab'}">${s||'—'}</span>`;
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────
+function renderDashboard() {
+  const total = OS.length, conc = count(OS, x => x.status === 'Concluída'),
+        cor = count(OS, isCorretiva), prev = count(OS, isPreventiva);
+  setText('kpi-total', total);
+  setText('kpi-conc', conc);
+  setText('kpi-conc-pct', `${total ? Math.round(conc/total*100) : 0}% do total`);
+  setText('kpi-cor', cor);
+  setText('kpi-cor-pct', `${total ? Math.round(cor/total*100) : 0}% do total`);
+  setText('kpi-prev', prev);
+  setText('kpi-prev-pct', `${total ? Math.round(prev/total*100) : 0}% do total`);
+  renderDashTable();
+  renderBar('setor-chart', sorted(groupBy(OS, x=>x.setor)).slice(0,6), '#60A5FA');
+  renderBar('tecnico-chart', sorted(groupBy(OS, x=>x.tecnico)).slice(0,5), '#2563EB');
+  renderTimeline();
+  renderBar('peca-chart', sorted(groupBy(OS, x=>x.pecas)).slice(0,5), '#D97706');
+  renderStatusChart();
+}
+
+function renderDashTable() {
+  let data = OS.slice().reverse();
+  if (dashTab === 'Corretiva')  data = data.filter(isCorretiva);
+  if (dashTab === 'Preventiva') data = data.filter(isPreventiva);
+  data = data.slice(0, 10);
+  $('dash-tbody').innerHTML = data.map(x => `<tr>
+    <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${x.setor}</td>
+    <td class="truncate" style="max-width:120px" title="${x.equipamento}">${x.equipamento}</td>
+    <td>${badgeIntervencao(x)}</td><td>${x.tecnico}</td><td>${badgeStatus(x.status)}</td>
+  </tr>`).join('') || '<tr><td colspan="7" class="empty">Sem dados</td></tr>';
+}
+
+function renderBar(id, data, color) {
+  const el = $(id);
+  if (!el || !data.length) return;
+  const max = data[0][1];
+  el.innerHTML = data.map(([label, val]) => `
+    <div class="bar-row">
+      <div class="bar-label" title="${label}">${label||'—'}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/max*100)}%;background:${color}"></div></div>
+      <div class="bar-val">${val}</div>
+    </div>`).join('');
+}
+
+function renderTimeline() {
+  const colors = {'Concluída':'#10B981','Em andamento':'#D97706','Aberta':'#2563EB'};
+  const recent = OS.slice().reverse().slice(0,6);
+  $('timeline').innerHTML = recent.map((x,i) => `
+    <div class="tl-item">
+      <div class="tl-dot-col">
+        <div class="tl-dot" style="background:${colors[x.status]||'#2563EB'}"></div>
+        ${i<5?'<div class="tl-line"></div>':''}
+      </div>
+      <div><div class="tl-title">OS #${x.numOS} — ${x.equipamento}</div>
+      <div class="tl-time">${x.data} ${x.hora} · ${x.tecnico||'—'}</div></div>
+    </div>`).join('');
+}
+
+function renderStatusChart() {
+  const g = groupBy(OS, x => x.status);
+  const colors = {'Concluída':'#10B981','Em andamento':'#D97706','Aberta':'#2563EB','Urgente':'#DC2626'};
+  const max = Math.max(...Object.values(g), 1);
+  $('status-chart').innerHTML = sorted(g).map(([label, val]) => `
+    <div class="bar-row">
+      <div class="bar-label">${label||'—'}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/max*100)}%;background:${colors[label]||'#A0AEC0'}"></div></div>
+      <div class="bar-val">${val}</div>
+    </div>`).join('');
+}
+
+// ── ORDENS ─────────────────────────────────────────────────────────────
+function renderOS() {
+  const search = ($('os-search')?.value||'').toLowerCase();
+  let data = OS.slice().reverse();
+  if (osFilter !== 'Todos') {
+    if (osFilter==='Corretiva')  data = data.filter(isCorretiva);
+    else if (osFilter==='Preventiva') data = data.filter(isPreventiva);
+    else data = data.filter(x => x.status === osFilter);
+  }
+  if (search) {
+    data = data.filter(x => [x.numOS, x.equipamento, x.setor, x.tecnico, x.falha, x.servico]
+      .some(f=>(f||'').toLowerCase().includes(search)));
+  }
+  $('os-tbody').innerHTML = data.map(x => `<tr>
+    <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${x.setor}</td>
+    <td class="truncate" style="max-width:130px" title="${x.equipamento}">${x.equipamento}</td>
+    <td class="truncate" style="max-width:130px" title="${x.falha}">${x.falha}</td>
+    <td>${badgeIntervencao(x)}</td>
+    <td class="truncate" style="max-width:180px" title="${x.servico}">${x.servico}</td>
+    <td>${x.tecnico||'—'}</td><td>${badgeStatus(x.status)}</td>
+  </tr>`).join('') || '<tr><td colspan="9" class="empty">Nenhuma OS encontrada</td></tr>';
+  setText('os-count', `Mostrando ${data.length} de ${OS.length} ordens de serviço`);
+  setText('os-total-badge', `${OS.length} OS`);
+}
+
+// ── HISTÓRICO ──────────────────────────────────────────────────────────
+function renderHistorico() {
+  const search = ($('hist-search')?.value||'').toLowerCase();
+  const grupos = {};
+  OS.forEach(x => {
+    if (!grupos[x.equipamento]) grupos[x.equipamento] = [];
+    grupos[x.equipamento].push(x);
+  });
+  let keys = Object.keys(grupos).sort();
+  if (search) keys = keys.filter(k => k.toLowerCase().includes(search));
+  const el = $('hist-content');
+  if (!keys.length) { el.innerHTML = '<div class="empty">Nenhum equipamento encontrado</div>'; return; }
+  el.innerHTML = keys.map(k => {
+    const os = grupos[k];
+    return `<div style="border-bottom:1px solid var(--border)">
+      <div class="hist-group-header">
+        <span class="hist-group-name">${k}</span>
+        <span class="hist-group-meta">${os.length} OS · ${os[0].setor}</span>
+      </div>
+      <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
+      <tbody>${os.map(x=>`<tr>
+        <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${badgeIntervencao(x)}</td>
+        <td class="truncate" style
