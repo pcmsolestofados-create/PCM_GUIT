@@ -227,4 +227,4 @@ function renderHistorico() {
       <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
       <tbody>${os.map(x=>`<tr>
         <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${badgeIntervencao(x)}</td>
-        <td class="truncate" style="max-width:240px" title="${x.servico}">${x.servico}</td>
+        <td class="truncate" style="max-width:240px" title="${x.servico}">${x.servico}
