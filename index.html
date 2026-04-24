@@ -230,6 +230,7 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
 <body>
 <div class="app">
 
+  <!-- SIDEBAR APRIMORADO -->
   <div class="sidebar">
     <div class="logo">
       <div class="logo-icon">⚙️</div>
@@ -237,6 +238,7 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
       <div class="logo-sub">Manutenção</div>
     </div>
 
+    <!-- Estatísticas Sidebar -->
     <div class="sidebar-stats">
       <div class="stat-badge">
         <span class="stat-badge-label">Total OS</span>
@@ -248,6 +250,7 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
       </div>
     </div>
 
+    <!-- Sincronização -->
     <div class="sync-indicator" id="sync-indicator">
       <div class="sync-icon">📊</div>
       <p><strong>Conectando...</strong><br>Sincronizando com<br>Google Sheets</p>
@@ -257,6 +260,7 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
       <div class="sync-status" id="sync-status"></div>
     </div>
 
+    <!-- Link Planilha -->
     <a class="sheet-link-btn" href="https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676" target="_blank" title="Abrir planilha">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -266,6 +270,7 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
       Abrir
     </a>
 
+    <!-- Navegação -->
     <div class="nav-sec">Principal</div>
     <div class="nav-item active" data-page="dashboard">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
@@ -295,8 +300,9 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
     </div>
   </div>
 
+  <!-- MAIN WRAPPER -->
   <div class="main-wrapper">
-
+    <!-- TOPBAR APRIMORADA -->
     <div class="topbar">
       <div class="topbar-l">
         <div class="breadcrumb">
@@ -328,8 +334,10 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
       </div>
     </div>
 
+    <!-- CONTENT -->
     <div class="content">
 
+      <!-- LOADING -->
       <div class="page active" id="page-loading">
         <div class="loading-container">
           <div class="loading-spinner"></div>
@@ -338,6 +346,7 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
         </div>
       </div>
 
+      <!-- DASHBOARD -->
       <div class="page" id="page-dashboard">
         <div class="dashboard-layout">
           <div class="kpi-section">
@@ -373,6 +382,7 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
         </div>
       </div>
 
+      <!-- ORDENS DE SERVIÇO -->
       <div class="page" id="page-ordens">
         <div class="panel">
           <div class="ph"><div class="pt">Ordens de Serviço</div><span id="os-total-badge" class="badge b-ab"></span></div>
@@ -395,6 +405,7 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
         </div>
       </div>
 
+      <!-- HISTÓRICO -->
       <div class="page" id="page-historico">
         <div class="panel">
           <div class="ph"><div class="pt">Histórico por equipamento</div></div>
@@ -405,21 +416,30 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
         </div>
       </div>
 
+      <!-- TÉCNICOS -->
       <div class="page" id="page-tecnicos">
         <div class="kpi-grid" id="tec-kpis"></div>
-        <div class="section-row" style="margin-top:16px;">
+        <div class="section-row">
           <div class="panel">
-            <div class="ph"><div class="pt">Produtividade por técnico</div></div>
-            <div class="tbl-wrap"><table><thead><tr><th>Técnico</th><th>Total OS</th><th>Concluídas</th><th>Eficiência</th></tr></thead><tbody id="tec-tbody"></tbody></table></div>
+            <div class="ph"><div class="pt">Desempenho por técnico</div></div>
+            <div class="tbl-wrap"><table><thead><tr><th>Técnico</th><th>Total</th><th>Corretivas</th><th>Preventivas</th><th>Concluídas</th><th>Em aberto</th></tr></thead>
+            <tbody id="tec-tbody"></tbody></table></div>
           </div>
+          <div class="panel"><div class="ph"><div class="pt">Distribuição de OS</div></div><div class="chart-wrap" id="tec-chart"></div></div>
         </div>
       </div>
 
+      <!-- RELATÓRIOS -->
       <div class="page" id="page-relatorios">
         <div class="section-row three">
-          <div class="panel"><div class="ph"><div class="pt">Resumo por Tipo</div></div><div class="tbl-wrap"><table><thead><tr><th>Tipo</th><th>Qtd</th><th>%</th></tr></thead><tbody id="rel-tbody"></tbody></table></div></div>
-          <div class="panel"><div class="ph"><div class="pt">Top Equipamentos (Manutenção)</div></div><div id="rel-equip" class="chart-wrap"></div></div>
-          <div class="panel"><div class="ph"><div class="pt">Top Setores</div></div><div id="rel-setor" class="chart-wrap"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Setores com mais OS</div></div><div id="rel-setores"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Equipamentos mais acionados</div></div><div id="rel-equip"></div></div>
+          <div class="panel"><div class="ph"><div class="pt">Peças / Intervenções</div></div><div id="rel-pecas"></div></div>
+        </div>
+        <div class="panel" style="margin-top:16px;">
+          <div class="ph"><div class="pt">Resumo geral das intervenções</div></div>
+          <div class="tbl-wrap"><table><thead><tr><th>Tipo de intervenção</th><th>Quantidade</th><th>Percentual</th></tr></thead>
+          <tbody id="rel-tbody"></tbody></table></div>
         </div>
       </div>
 
@@ -428,287 +448,284 @@ input[type=text]:focus{border-color:var(--accent);background:rgba(255,255,255,0.
 </div>
 
 <script>
-// ── CONFIGURAÇÃO ───────────────────────────────────────────────────────
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?gid=1091192334&single=true&output=csv';
+// ── CONFIGURAÇÃO ──────────────────────────────────────────────────────
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-dtFO4D4MrpI2QcL9dTPlSCp5aeQtAlStDYIDkaewPHjcbZgj1wz0ln4wcGWGUSEMtkUZsRyjGHI8/pub?gid=1256614582&single=true&output=csv';
+const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit?gid=114888676#gid=114888676';
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfQBUkaWl5gUqxcgDWs5Xk33K4ZDo2oqOgbFWUu_suXFIGrIQ/viewform?pli=1&pli=1';
 
-let dadosOS = [];
-let dashTab = 'Todas';
-let osFilter = 'Todos';
+const COL = {
+  NUM_OS:0, DATA:1, HORA:2, SOLICITANTE:3, SETOR:4, EQUIPAMENTO:5, FALHA:6, INTERVENCAO:7,
+  SERVICO:8, PECAS:9, SEGURANCA_EQ:10, INDICACAO_SEG:11, COLABORADOR:12, TECNICO:13, STATUS:14,
+};
+
+let OS = [], osFilter = 'Todos', dashTab = 'Todas', currentPage = 'dashboard';
 
 const $ = id => document.getElementById(id);
+const setText = (id, v) => { const el = $(id); if(el) el.textContent = v; };
+const groupBy = (arr, fn) => { const m={}; arr.forEach(x=>{ const k=fn(x)||'—'; m[k]=(m[k]||0)+1; }); return m; };
+const sorted  = obj => Object.entries(obj).sort((a,b)=>b[1]-a[1]);
+const count   = (arr, fn) => arr.filter(fn).length;
+const isCorretiva   = x => (x.intervencao||'').toLowerCase().includes('corretiva');
+const isPreventiva  = x => (x.intervencao||'').toLowerCase().includes('preventiva');
 
-async function reloadData() {
-  const badge = $('sync-badge');
-  badge.className = 'sync-badge syncing';
-  badge.innerText = 'Sincronizando...';
+function openForm() { window.open(FORM_URL, '_blank'); }
+function goToSheet() { window.open(SHEET_EDIT_URL, '_blank'); }
 
+async function loadGoogleSheets() {
   try {
+    setSyncBadge('syncing', 'Sincronizando...');
     const response = await fetch(SHEET_URL);
-    if (!response.ok) throw new Error('Erro ao carregar CSV');
-    const csvData = await response.text();
-    
-    // Parse CSV simples (considerando que não há vírgulas dentro dos campos)
-    const rows = csvData.split('\n').map(row => row.split(',').map(cell => cell.trim()));
-    // Remove cabeçalho e linhas vazias
-    dadosOS = rows.slice(1).filter(r => r.length > 1 && r[0] !== "");
-
-    renderAll();
-    
-    badge.className = 'sync-badge ok';
-    badge.innerText = 'Sincronizado';
-    $('sync-indicator').style.display = 'none';
-    $('data-info').style.display = 'block';
-    $('data-info-text').innerHTML = `<strong>${dadosOS.length}</strong> ordens carregadas`;
-    $('sync-status').innerText = 'Atualizado agora mesmo';
-
-    if($('page-loading').classList.contains('active')) {
-      showPage('dashboard');
-    }
+    const csvText = await response.text();
+    OS = parseCSV(csvText);
+    if (!OS.length) throw new Error('Nenhuma OS encontrada');
+    setSyncBadge('ok', `${OS.length} OS carregadas`);
+    updateStorageInfo();
+    updateSidebarStats();
+    showPage('dashboard');
+    renderCurrentPage();
   } catch (error) {
-    console.error(error);
-    badge.className = 'sync-badge err';
-    badge.innerText = 'Erro na conexão';
-    alert('Erro ao sincronizar dados. Verifique a publicação da planilha.');
+    console.error('❌ Erro:', error);
+    setSyncBadge('err', 'Erro ao carregar dados');
+    alert('Erro ao conectar com Google Sheets: ' + error.message);
   }
 }
 
-function showPage(pageId) {
+function parseCSV(text) {
+  const sep = text.split('\n')[0]?.includes(';') ? ';' : ',';
+  const lines = text.split('\n').map(l => l.split(sep).map(c => c.trim().replace(/^"|"$/g,'')));
+  return lines.slice(1)
+    .filter(r => r.length > 5 && r[COL.NUM_OS] && r[COL.NUM_OS].trim())
+    .map(r => ({
+      numOS:r[COL.NUM_OS]?.trim() || '', data:r[COL.DATA]?.trim() || '', hora:r[COL.HORA]?.trim() || '',
+      solicitante:r[COL.SOLICITANTE]?.trim() || '', setor:r[COL.SETOR]?.trim() || '',
+      equipamento:r[COL.EQUIPAMENTO]?.trim() || '', falha:r[COL.FALHA]?.trim() || '',
+      intervencao:r[COL.INTERVENCAO]?.trim() || '', servico:r[COL.SERVICO]?.trim() || '',
+      pecas:r[COL.PECAS]?.trim() || '', seguranca:r[COL.SEGURANCA_EQ]?.trim() || '',
+      indicacaoSeg:r[COL.INDICACAO_SEG]?.trim() || '', colaborador:r[COL.COLABORADOR]?.trim() || '',
+      tecnico:r[COL.TECNICO]?.trim() || '', status:r[COL.STATUS]?.trim() || 'Aberta',
+    }));
+}
+
+function updateStorageInfo() {
+  if (OS.length > 0) {
+    const timestamp = new Date().toLocaleString('pt-BR');
+    $('data-info').style.display = 'block';
+    $('data-info-text').innerHTML = `<strong>${OS.length} OS</strong> carregadas<br>Atualizado: ${timestamp}`;
+    $('sync-indicator').style.display = 'none';
+  }
+}
+
+function updateSidebarStats() {
+  const total = OS.length;
+  const conc = count(OS, x => x.status === 'Concluída');
+  setText('sb-total', total);
+  setText('sb-conc', conc);
+}
+
+function setSyncBadge(type, msg) {
+  const el = $('sync-badge');
+  if(el) { el.className = `sync-badge ${type}`; el.textContent = msg; }
+}
+
+function showPage(page) {
+  currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  $(pageId === 'loading' ? 'page-loading' : 'page-' + pageId).classList.add('active');
-  
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.classList.toggle('active', item.dataset.page === pageId);
-  });
-  
-  const titles = { dashboard: 'Dashboard', ordens: 'Ordens de Serviço', historico: 'Histórico', tecnicos: 'Técnicos', relatorios: 'Relatórios' };
-  $('page-title').innerText = titles[pageId] || 'Sol Estofados';
+  document.querySelectorAll('.nav-item[data-page]').forEach(n => n.classList.remove('active'));
+  $(`page-${page}`)?.classList.add('active');
+  document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
+  const titles = {dashboard:'Dashboard', ordens:'Ordens de Serviço', historico:'Histórico', tecnicos:'Técnicos', relatorios:'Relatórios'};
+  setText('page-title', titles[page] || page);
+  renderCurrentPage();
 }
 
-function renderAll() {
-  renderKpis();
+function renderCurrentPage() {
+  const r = {dashboard:renderDashboard, ordens:renderOS, historico:renderHistorico, tecnicos:renderTecnicos, relatorios:renderRelatorios};
+  r[currentPage]?.();
+}
+
+function reloadData() { setSyncBadge('syncing', 'Recarregando...'); loadGoogleSheets(); }
+
+function badgeIntervencao(x) {
+  return isCorretiva(x) ? '<span class="badge b-cor">Corretiva</span>' : '<span class="badge b-prev">Preventiva</span>';
+}
+
+function badgeStatus(s) {
+  const m = {'Concluída':'b-conc','Em andamento':'b-and','Aberta':'b-ab','Urgente':'b-urg'};
+  return `<span class="badge ${m[s]||'b-ab'}">${s||'—'}</span>`;
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────
+function renderDashboard() {
+  const total = OS.length, conc = count(OS, x => x.status === 'Concluída'),
+        cor = count(OS, isCorretiva), prev = count(OS, isPreventiva);
+  setText('kpi-total', total);
+  setText('kpi-conc', conc);
+  setText('kpi-conc-pct', `${total ? Math.round(conc/total*100) : 0}% do total`);
+  setText('kpi-cor', cor);
+  setText('kpi-cor-pct', `${total ? Math.round(cor/total*100) : 0}% do total`);
+  setText('kpi-prev', prev);
+  setText('kpi-prev-pct', `${total ? Math.round(prev/total*100) : 0}% do total`);
   renderDashTable();
-  renderCharts();
-  renderOS();
-  renderHistorico();
-  renderTecnicos();
-  renderRelatorios();
-}
-
-function renderKpis() {
-  const total = dadosOS.length;
-  const conc = dadosOS.filter(r => r[8] === 'Concluída').length;
-  const corr = dadosOS.filter(r => r[5] === 'Corretiva').length;
-  const prev = dadosOS.filter(r => r[5] === 'Preventiva').length;
-
-  $('kpi-total').innerText = total;
-  $('sb-total').innerText = total;
-  
-  $('kpi-conc').innerText = conc;
-  $('sb-conc').innerText = conc;
-  $('kpi-conc-pct').innerText = total ? Math.round(conc/total*100) + '% do total' : '0%';
-  
-  $('kpi-cor').innerText = corr;
-  $('kpi-cor-pct').innerText = total ? Math.round(corr/total*100) + '% de incidência' : '0%';
-  
-  $('kpi-prev').innerText = prev;
-  $('kpi-prev-pct').innerText = total ? Math.round(prev/total*100) + '% de cobertura' : '0%';
-}
-
-function getBadge(status) {
-  const s = status?.toLowerCase() || '';
-  if (s.includes('concluída')) return 'b-conc';
-  if (s.includes('andamento')) return 'b-and';
-  if (s.includes('corretiva')) return 'b-cor';
-  if (s.includes('preventiva')) return 'b-prev';
-  return 'b-ab';
+  renderBar('setor-chart', sorted(groupBy(OS, x=>x.setor)).slice(0,6), '#60A5FA');
+  renderBar('tecnico-chart', sorted(groupBy(OS, x=>x.tecnico)).slice(0,5), '#2563EB');
+  renderTimeline();
+  renderBar('peca-chart', sorted(groupBy(OS, x=>x.pecas)).slice(0,5), '#D97706');
+  renderStatusChart();
 }
 
 function renderDashTable() {
-  let filtered = dashTab === 'Todas' ? dadosOS : dadosOS.filter(r => r[5] === dashTab);
-  // Últimas 8
-  const last = filtered.slice(-8).reverse();
-  
-  $('dash-tbody').innerHTML = last.length ? last.map(r => `
-    <tr>
-      <td class="os-num">${r[0]}</td>
-      <td>${r[1]}</td>
-      <td>${r[2]}</td>
-      <td class="truncate" style="max-width:140px" title="${r[3]}">${r[3]}</td>
-      <td><span class="badge ${getBadge(r[5])}">${r[5]}</span></td>
-      <td>${r[7]}</td>
-      <td><span class="badge ${getBadge(r[8])}">${r[8]}</span></td>
-    </tr>
-  `).join('') : '<tr><td colspan="7" class="empty">Nenhum registro encontrado</td></tr>';
+  let data = OS.slice().reverse();
+  if (dashTab === 'Corretiva')  data = data.filter(isCorretiva);
+  if (dashTab === 'Preventiva') data = data.filter(isPreventiva);
+  data = data.slice(0, 10);
+  $('dash-tbody').innerHTML = data.map(x => `<tr>
+    <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${x.setor}</td>
+    <td class="truncate" style="max-width:120px" title="${x.equipamento}">${x.equipamento}</td>
+    <td>${badgeIntervencao(x)}</td><td>${x.tecnico}</td><td>${badgeStatus(x.status)}</td>
+  </tr>`).join('') || '<tr><td colspan="7" class="empty">Sem dados</td></tr>';
 }
 
-function renderCharts() {
-  const count = (arr, idx) => arr.reduce((acc, r) => { acc[r[idx]] = (acc[r[idx]] || 0) + 1; return acc; }, {});
-  
-  const setorData = Object.entries(count(dadosOS, 2)).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const tecData = Object.entries(count(dadosOS, 7)).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const pecaData = Object.entries(count(dadosOS, 6)).sort((a,b)=>b[1]-a[1]).slice(0,5);
-
-  const drawBar = (data, color) => data.map(([label, val]) => `
+function renderBar(id, data, color) {
+  const el = $(id);
+  if (!el || !data.length) return;
+  const max = data[0][1];
+  el.innerHTML = data.map(([label, val]) => `
     <div class="bar-row">
-      <div class="bar-label">${label}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/dadosOS.length*100)}%; background:${color}"></div></div>
+      <div class="bar-label" title="${label}">${label||'—'}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/max*100)}%;background:${color}"></div></div>
       <div class="bar-val">${val}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
+}
 
-  $('setor-chart').innerHTML = drawBar(setorData, 'var(--accent3)');
-  $('tecnico-chart').innerHTML = drawBar(tecData, 'var(--green)');
-  $('peca-chart').innerHTML = drawBar(pecaData, 'var(--amber)');
-
-  // Timeline
-  const timeline = dadosOS.slice(-5).reverse();
-  $('timeline').innerHTML = timeline.map(r => `
+function renderTimeline() {
+  const colors = {'Concluída':'#10B981','Em andamento':'#D97706','Aberta':'#2563EB'};
+  const recent = OS.slice().reverse().slice(0,6);
+  $('timeline').innerHTML = recent.map((x,i) => `
     <div class="tl-item">
-      <div class="tl-dot-col"><div class="tl-dot" style="background:${r[8]==='Concluída'?'var(--green)':'var(--accent)'}"></div><div class="tl-line"></div></div>
-      <div class="tl-content">
-        <div class="tl-title">OS ${r[0]} — ${r[3]}</div>
-        <div class="tl-time">${r[1]} • Setor ${r[2]} • ${r[8]}</div>
+      <div class="tl-dot-col">
+        <div class="tl-dot" style="background:${colors[x.status]||'#2563EB'}"></div>
+        ${i<5?'<div class="tl-line"></div>':''}
       </div>
-    </div>
-  `).join('');
-
-  // Status Chart
-  const statusCount = count(dadosOS, 8);
-  $('status-chart').innerHTML = Object.entries(statusCount).map(([label, val]) => `
-    <div class="stat-pill">
-      <span class="stat-name">${label}</span>
-      <span class="stat-count">${val}</span>
-    </div>
-  `).join('');
+      <div><div class="tl-title">OS #${x.numOS} — ${x.equipamento}</div>
+      <div class="tl-time">${x.data} ${x.hora} · ${x.tecnico||'—'}</div></div>
+    </div>`).join('');
 }
 
+function renderStatusChart() {
+  const g = groupBy(OS, x => x.status);
+  const colors = {'Concluída':'#10B981','Em andamento':'#D97706','Aberta':'#2563EB','Urgente':'#DC2626'};
+  const max = Math.max(...Object.values(g), 1);
+  $('status-chart').innerHTML = sorted(g).map(([label, val]) => `
+    <div class="bar-row">
+      <div class="bar-label">${label||'—'}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/max*100)}%;background:${colors[label]||'#A0AEC0'}"></div></div>
+      <div class="bar-val">${val}</div>
+    </div>`).join('');
+}
+
+// ── ORDENS ─────────────────────────────────────────────────────────────
 function renderOS() {
-  const search = $('os-search').value.toLowerCase();
-  let filtered = dadosOS.filter(r => {
-    const matchesSearch = r.some(cell => cell.toLowerCase().includes(search));
-    const matchesFilter = osFilter === 'Todos' || r[8] === osFilter || r[5] === osFilter;
-    return matchesSearch && matchesFilter;
-  });
-
-  $('os-total-badge').innerText = `${filtered.length} Encontradas`;
-  $('os-count').innerText = `Exibindo ${filtered.length} de ${dadosOS.length} ordens de serviço totais.`;
-
-  $('os-tbody').innerHTML = filtered.reverse().map(r => `
-    <tr>
-      <td class="os-num">${r[0]}</td>
-      <td style="white-space:nowrap">${r[1]}</td>
-      <td>${r[2]}</td>
-      <td><strong>${r[3]}</strong></td>
-      <td class="truncate" style="max-width:150px" title="${r[4]}">${r[4]}</td>
-      <td><span class="badge ${getBadge(r[5])}">${r[5]}</span></td>
-      <td class="truncate" style="max-width:180px" title="${r[6]}">${r[6]}</td>
-      <td>${r[7]}</td>
-      <td><span class="badge ${getBadge(r[8])}">${r[8]}</span></td>
-    </tr>
-  `).join('') || '<tr><td colspan="9" class="empty">Nenhuma ordem encontrada para os filtros aplicados</td></tr>';
+  const search = ($('os-search')?.value||'').toLowerCase();
+  let data = OS.slice().reverse();
+  if (osFilter !== 'Todos') {
+    if (osFilter==='Corretiva')  data = data.filter(isCorretiva);
+    else if (osFilter==='Preventiva') data = data.filter(isPreventiva);
+    else data = data.filter(x => x.status === osFilter);
+  }
+  if (search) {
+    data = data.filter(x => [x.numOS, x.equipamento, x.setor, x.tecnico, x.falha, x.servico]
+      .some(f=>(f||'').toLowerCase().includes(search)));
+  }
+  $('os-tbody').innerHTML = data.map(x => `<tr>
+    <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${x.setor}</td>
+    <td class="truncate" style="max-width:130px" title="${x.equipamento}">${x.equipamento}</td>
+    <td class="truncate" style="max-width:130px" title="${x.falha}">${x.falha}</td>
+    <td>${badgeIntervencao(x)}</td>
+    <td class="truncate" style="max-width:180px" title="${x.servico}">${x.servico}</td>
+    <td>${x.tecnico||'—'}</td><td>${badgeStatus(x.status)}</td>
+  </tr>`).join('') || '<tr><td colspan="9" class="empty">Nenhuma OS encontrada</td></tr>';
+  setText('os-count', `Mostrando ${data.length} de ${OS.length} ordens de serviço`);
+  setText('os-total-badge', `${OS.length} OS`);
 }
 
+// ── HISTÓRICO ──────────────────────────────────────────────────────────
 function renderHistorico() {
-  const search = $('hist-search').value.toLowerCase();
-  const groups = dadosOS.reduce((acc, r) => {
-    if (!acc[r[3]]) acc[r[3]] = [];
-    acc[r[3]].push(r);
-    return acc;
-  }, {});
-
-  const sortedGroups = Object.keys(groups)
-    .filter(name => name.toLowerCase().includes(search))
-    .sort();
-
-  $('hist-content').innerHTML = sortedGroups.map(name => {
-    const items = groups[name].reverse();
-    return `
-      <div class="hist-group">
-        <div class="hist-group-header">
-          <span class="hist-group-name">${name}</span>
-          <span class="hist-group-meta">${items.length} manutenções registradas</span>
-        </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>Data</th><th>OS</th><th>Tipo</th><th>Falha relatada</th><th>Serviço realizado</th><th>Status</th></tr></thead>
-            <tbody>
-              ${items.map(r => `
-                <tr>
-                  <td style="width:100px">${r[1]}</td>
-                  <td class="os-num" style="width:70px">${r[0]}</td>
-                  <td style="width:100px"><span class="badge ${getBadge(r[5])}">${r[5]}</span></td>
-                  <td>${r[4]}</td>
-                  <td>${r[6]}</td>
-                  <td style="width:110px"><span class="badge ${getBadge(r[8])}">${r[8]}</span></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
+  const search = ($('hist-search')?.value||'').toLowerCase();
+  const grupos = {};
+  OS.forEach(x => {
+    if (!grupos[x.equipamento]) grupos[x.equipamento] = [];
+    grupos[x.equipamento].push(x);
+  });
+  let keys = Object.keys(grupos).sort();
+  if (search) keys = keys.filter(k => k.toLowerCase().includes(search));
+  const el = $('hist-content');
+  if (!keys.length) { el.innerHTML = '<div class="empty">Nenhum equipamento encontrado</div>'; return; }
+  el.innerHTML = keys.map(k => {
+    const os = grupos[k];
+    return `<div style="border-bottom:1px solid var(--border)">
+      <div class="hist-group-header">
+        <span class="hist-group-name">${k}</span>
+        <span class="hist-group-meta">${os.length} OS · ${os[0].setor}</span>
       </div>
-    `;
-  }).join('') || '<div class="empty">Nenhum equipamento encontrado</div>';
+      <div class="tbl-wrap"><table><thead><tr><th>OS</th><th>Data</th><th>Tipo</th><th>Serviço realizado</th><th>Técnico</th><th>Status</th></tr></thead>
+      <tbody>${os.map(x=>`<tr>
+        <td class="os-num">#${x.numOS}</td><td style="white-space:nowrap">${x.data}</td><td>${badgeIntervencao(x)}</td>
+        <td class="truncate" style="max-width:240px" title="${x.servico}">${x.servico}</td>
+        <td>${x.tecnico||'—'}</td><td>${badgeStatus(x.status)}</td>
+      </tr>`).join('')}</tbody></table></div>
+    </div>`;
+  }).join('');
 }
 
+// ── TÉCNICOS ───────────────────────────────────────────────────────────
 function renderTecnicos() {
-  const tecs = dadosOS.reduce((acc, r) => {
-    const n = r[7];
-    if (!acc[n]) acc[n] = { total: 0, conc: 0 };
-    acc[n].total++;
-    if (r[8] === 'Concluída') acc[n].conc++;
-    return acc;
-  }, {});
-
-  const list = Object.entries(tecs).sort((a,b) => b[1].total - a[1].total);
-  
-  $('tec-kpis').innerHTML = list.slice(0, 4).map(([name, data]) => `
-    <div class="kpi">
-      <div class="kpi-label">Técnico: ${name}</div>
-      <div class="kpi-val">${data.total}</div>
-      <div class="kpi-sub g">${data.conc} concluídas (${Math.round(data.conc/data.total*100)}%)</div>
-    </div>
-  `).join('');
-
-  $('tec-tbody').innerHTML = list.map(([name, data]) => `
-    <tr>
-      <td><strong>${name}</strong></td>
-      <td>${data.total}</td>
-      <td>${data.conc}</td>
-      <td>
-        <div style="display:flex; align-items:center; gap:10px">
-          <div class="bar-track" style="height:6px; margin:0"><div class="bar-fill" style="width:${Math.round(data.conc/data.total*100)}%; background:var(--green)"></div></div>
-          <span style="font-weight:700">${Math.round(data.conc/data.total*100)}%</span>
-        </div>
-      </td>
-    </tr>
-  `).join('');
+  const tecs = {};
+  OS.forEach(x => {
+    const t = (x.tecnico||'—').trim();
+    if(!tecs[t]) tecs[t]={total:0,cor:0,prev:0,conc:0,aberto:0};
+    tecs[t].total++;
+    if(isCorretiva(x)) tecs[t].cor++; else tecs[t].prev++;
+    if(x.status==='Concluída') tecs[t].conc++;
+    else tecs[t].aberto++;
+  });
+  const entries = sorted(groupBy(OS, x=>(x.tecnico||'—').trim()));
+  $('tec-kpis').innerHTML = entries.slice(0,4).map(([tec,val]) => `
+    <div class="kpi"><div class="kpi-label">${tec}</div><div class="kpi-val">${val}</div>
+    <div class="kpi-sub">OS realizadas</div></div>`).join('');
+  $('tec-tbody').innerHTML = entries.map(([tec]) => {
+    const t = tecs[tec];
+    return `<tr><td style="font-weight:700">${tec}</td><td>${t.total}</td><td>${t.cor}</td><td>${t.prev}</td>
+      <td><span class="badge b-conc">${t.conc}</span></td>
+      <td>${t.aberto>0?`<span class="badge b-ab">${t.aberto}</span>`:'—'}</td></tr>`;
+  }).join('');
+  renderBar('tec-chart', entries, '#2563EB');
 }
 
+// ── RELATÓRIOS ─────────────────────────────────────────────────────────
 function renderRelatorios() {
-  const total = dadosOS.length;
-  const count = (idx) => dadosOS.reduce((acc, r) => { acc[r[idx]] = (acc[r[idx]] || 0) + 1; return acc; }, {});
-  
-  const tipos = Object.entries(count(5));
-  const equips = Object.entries(count(3)).sort((a,b)=>b[1]-a[1]).slice(0, 8);
-  const setores = Object.entries(count(2)).sort((a,b)=>b[1]-a[1]).slice(0, 8);
-
-  const drawMini = (data, color) => data.map(([k, v]) => 
+  const setores = sorted(groupBy(OS, x=>x.setor));
+  const equips  = sorted(groupBy(OS, x=>x.equipamento));
+  const pecas   = sorted(groupBy(OS, x=>x.pecas));
+  const tipos   = sorted(groupBy(OS, x=>x.intervencao));
+  const total   = OS.length;
+  $('rel-setores').innerHTML = setores.slice(0,10).map(([k,v]) =>
     `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
-
-  $('rel-equip').innerHTML = drawMini(equips, '');
-  $('rel-setor').innerHTML = drawMini(setores, '');
-  $('rel-tbody').innerHTML = tipos.map(([k,v]) => 
+  $('rel-equip').innerHTML = equips.slice(0,10).map(([k,v]) =>
+    `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
+  $('rel-pecas').innerHTML = pecas.slice(0,8).map(([k,v]) =>
+    `<div class="stat-pill"><span class="stat-name">${k}</span><span class="stat-count">${v}</span></div>`).join('');
+  $('rel-tbody').innerHTML = tipos.map(([k,v]) =>
     `<tr><td>${k}</td><td>${v}</td><td>${Math.round(v/total*100)}%</td></tr>`).join('');
 }
 
 // ── EVENTOS ────────────────────────────────────────────────────────────
-document.querySelectorAll('.nav-item[data-page]').forEach(item => 
+document.querySelectorAll('.nav-item[data-page]').forEach(item =>
   item.addEventListener('click', () => showPage(item.dataset.page))
 );
-document.querySelectorAll('[data-goto]').forEach(el => 
+document.querySelectorAll('[data-goto]').forEach(el =>
   el.addEventListener('click', () => showPage(el.dataset.goto))
 );
-document.querySelectorAll('#dash-tabs .tab').forEach(tab => 
+document.querySelectorAll('#dash-tabs .tab').forEach(tab =>
   tab.addEventListener('click', () => {
     document.querySelectorAll('#dash-tabs .tab').forEach(t=>t.classList.remove('active'));
     tab.classList.add('active');
@@ -716,7 +733,7 @@ document.querySelectorAll('#dash-tabs .tab').forEach(tab =>
     renderDashTable();
   })
 );
-document.querySelectorAll('#os-filters .filter-btn').forEach(btn => 
+document.querySelectorAll('#os-filters .filter-btn').forEach(btn =>
   btn.addEventListener('click', () => {
     document.querySelectorAll('#os-filters .filter-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
@@ -727,18 +744,9 @@ document.querySelectorAll('#os-filters .filter-btn').forEach(btn =>
 $('os-search')?.addEventListener('input', renderOS);
 $('hist-search')?.addEventListener('input', renderHistorico);
 
-function openForm() { 
-  window.open('https://forms.gle/vossa-url-do-forms', '_blank'); 
-}
-function goToSheet() { 
-  window.open('https://docs.google.com/spreadsheets/d/1OeAHhSAxX_ZcTqA2ZxR0V1B_PN8Z2qwxJaxH86UQGVQ/edit', '_blank'); 
-}
-
-// Inicialização
-window.addEventListener('DOMContentLoaded', reloadData);
-// Auto-refresh a cada 5 minutos
-setInterval(reloadData, 300000);
+// ── INICIALIZAÇÃO ──────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', loadGoogleSheets);
+setInterval(loadGoogleSheets, 5 * 60 * 1000);
 </script>
 </body>
 </html>
-
